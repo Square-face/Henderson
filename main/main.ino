@@ -15,3 +15,8 @@ void loop() {
   // put your main code here, to run repeatedly:
 
 }
+
+
+bool signbit(short n) {
+    return n >> (sizeof(n) * 8) - 1;
+}
