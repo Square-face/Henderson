@@ -13,10 +13,15 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-
+  char x = 255;
+  analogWrite(13, x);
 }
-
 
 bool isNegative(short n) {
     return n >> (sizeof(n) * 8) - 1;
+}
+
+int readArray()
+{
+  // TODO
 }
