@@ -17,6 +17,6 @@ void loop() {
 }
 
 
-bool signbit(short n) {
+bool isNegative(short n) {
     return n >> (sizeof(n) * 8) - 1;
 }
