@@ -1,17 +1,27 @@
+#include <QTRSensors.h>
+
 
 // hacky optimization for stupid shit
 // why use 2's complement when you can use 2 bytes
 struct twoByteSignedChar {
-  char num;
+  unsigned char num;
   bool sign;
 };
 
+
+
 // Motor 1 pins, left motor
-const char E1 = 5;
-const char M1 = 4;
+const unsigned char E1 = 5;
+const unsigned char M1 = 4;
+
 // Motor 2 pins, right motor
-const char E2 = 6;
-const char M2 = 7;
+const unsigned char E2 = 6;
+const unsigned char M2 = 7;
+
+
+// analog readings
+unsigned short sensor_readings[8];
+QTRSensorsAnalog sensors((unsigned char[]) {A1, A2, A3, A4, A5, A6}, 6);
 
 void setup() 
 {
@@ -35,10 +45,18 @@ bool isNegative(short n)
     return n >> (sizeof(n) * 8) - 1;
 }
 
-int readArray()
+
+
+
+unsigned int readArray()
 {
-  // TODO
+  sensors.read(sensor_readings);
+  return sensors.readLine(sensor_readings)
 }
+
+
+
+
 
 twoByteSignedChar PID(int input)
 {
