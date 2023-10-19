@@ -9,35 +9,47 @@ struct twoByteSignedChar {
 };
 
 
+const unsigned char calibrationSpeed = 0x50;
+
 
 // Motor 1 pins, left motor
-const unsigned char motor1Speed = 5;
-const unsigned char motor1Direction = 4;
+const unsigned char leftMotorDirection = 4;
+const unsigned char leftMotorSpeed = 5;
 
 // Motor 2 pins, right motor
-const unsigned char motor2Speed = 6;
-const unsigned char motor2Direction = 7;
+const unsigned char rightMotorSpeed = 6;
+const unsigned char rightMotorDirection = 7;
 
+
+// == state variables ==
+
+// calibration
+bool calibrating = false;
+unsigned short calibration_cycles = 0xFFFF;
 
 // analog readings
-unsigned short sensor_readings[8];
-QTRSensorsAnalog sensors((unsigned char[]) {A1, A2, A3, A4, A5, A6}, 6);
+unsigned short sensor_readings[6];
+QTRSensors sensors;
+
+
 
 void setup() 
 {
+  sensors.setTypeAnalog();
+  sensors.setSensorPins((const unsigned char[]){A1, A2, A3, A4, A5, A6}, 6);
+  
   // Sets the motor pins to OUTPUT
   for (int i = 4; i <= 7; i++)
     pinMode(i, OUTPUT);
 
-  digitalWrite(motor1Direction, HIGH);
-  digitalWrite(motor2Direction, HIGH);
+  digitalWrite(leftMotorDirection, HIGH);
+  digitalWrite(rightMotorDirection, HIGH);
 }
 
 void loop() 
 {
-  // put your main code here, to run repeatedly:
-  char x = 255;
-  analogWrite(13, x);
+  // calibration check
+  if (calibrating) {calibrating = calibrate(); return;}
 }
 
 bool isNegative(short n) 
@@ -47,20 +59,52 @@ bool isNegative(short n)
 
 
 
-
-unsigned int readArray()
+/*
+ * Get the current line position as a unsigned short between 0 (all the way to the left) and <num_sensors>*1000 (all the way to the right)
+ * If the line is lost, i.e the robot did not turn fast enough, the value returned will still be towards the side the line was lost at.
+*/
+unsigned short readArray()
 {
   sensors.read(sensor_readings);
-  return sensors.readLine(sensor_readings)
+  return sensors.readLineBlack(sensor_readings);
 }
 
+
+
+/*
+ * function to run when calibrating
+ * outputs a bool indicating if the calibration should continue the next loop or if it is done
+ * false means the calibration is done
+*/
+bool calibrate() {
+  if (!calibration_cycles > 0){
+    calibrating = false;
+
+      // unspin 
+      digitalWrite(leftMotorDirection, HIGH);
+      digitalWrite(rightMotorDirection, HIGH);
+
+      analogWrite(leftMotorSpeed, 0);
+      analogWrite(rightMotorSpeed, 0);
+  }
+  sensors.calibrate()
+  
+  // spin 
+  digitalWrite(leftMotorDirection, HIGH);
+  digitalWrite(rightMotorDirection, LOW);
+
+  analogWrite(leftMotorSpeed, calibrationSpeed);
+  analogWrite(rightMotorSpeed, calibrationSpeed);
+
+  calibration_cycles--;
+}
 
 
 
 
 twoByteSignedChar PID(int input)
 {
-  int goal = 0; // Depending on your implementation of readArray(), change this to be the middle value.
+  int goal = (sizeof(sensor_readings) / sizeof(unsigned int))*500; // Depending on your implementation of readArray(), change this to be the middle value.
   int error = input - goal;
 
   // TODO
@@ -69,14 +113,15 @@ twoByteSignedChar PID(int input)
 // Sets the speed of the wheel based oon the input
 void steer(twoByteSignedChar input)
 {
-  if (input.sign) { // If negative
+  if (input.sign) { // negative
     // Set right wheel to max and reduce speed on left wheel
-    analogWrite(motor1Speed, (input.num ^ 0xFF)); 
-    analogWrite(motor2Speed, 0xFF);
-  } else {  // If positive
-    // Set left wheel to max and reduce speed on right wheel
-    analogWrite(motor1Speed, 0xFF);
-    analogWrite(motor2Speed, (input.num ^ 0xFF));
+    analogWrite(leftMotorSpeed, (input.num ^ 0xFF)); 
+    analogWrite(rightMotorSpeed, 0xFF);
+    return
   }
+
+  // Set left wheel to max and reduce speed on right wheel
+  analogWrite(leftMotorSpeed, 0xFF);
+  analogWrite(rightMotorSpeed, (input.num ^ 0xFF));
 }
 
