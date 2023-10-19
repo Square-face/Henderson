@@ -35,11 +35,13 @@ QTRSensors sensors;
 
 // Global variables for the PID controller
 // These need a value
-const float Pk, Ik, Dk;
+const float Pk, Ik, Dk, IntegralMax;
 
 int lastError = 0;
 int Integral = 0;
-int IntegralResetRange = 8;
+// int IntegralResetRange = 8; IN REVIEW
+
+
 
 void setup() 
 {
@@ -85,7 +87,7 @@ unsigned short readArray()
  * false means the calibration is done
 */
 bool calibrate() {
-  if (!calibration_cycles > 0){
+  if (!(calibration_cycles > 0)){
     calibrating = false;
 
       // unspin 
@@ -95,7 +97,7 @@ bool calibrate() {
       analogWrite(leftMotorSpeed, 0);
       analogWrite(rightMotorSpeed, 0);
   }
-  sensors.calibrate()
+  sensors.calibrate();
   
   // spin 
   digitalWrite(leftMotorDirection, HIGH);
@@ -107,9 +109,7 @@ bool calibrate() {
   calibration_cycles--;
 }
 
-
-
-
+// PID controller function, takes an input from the 
 twoByteSignedChar PID(int input)
 {
   int goal = (sizeof(sensor_readings) / sizeof(unsigned int))*500; // Depending on your implementation of readArray(), change this to be the middle value.
@@ -125,29 +125,29 @@ twoByteSignedChar PID(int input)
   int Proportional = error;
 
   // I
-  Integral = min(Integral + error, );
+  Integral = min(Integral + error, IntegralMax);
 
   // D
   int Derivative = error - lastError;
   lastError = error;
   
   // Calculates the motor speed and formats it as a twoByteSignedChar
-  short motorspeed = min(round((P * Pk) + (I * Ik) + (D * Dk)), 0xFF);
+  short motorspeed = min(round((Proportional * Pk) + (Integral * Ik) + (Derivative * Dk)), 0xFF);
   twoByteSignedChar output;
   output.sign = isNegative(motorspeed);
-  output.num = (char) abs(motorspeed);
+  output.num = (unsigned char) abs(motorspeed);
 
   return output;
 }
 
-// Sets the speed of the wheel based oon the input
+// Sets the speed of the wheel based on the input
 void steer(twoByteSignedChar input)
 {
   if (input.sign) { // negative
     // Set right wheel to max and reduce speed on left wheel
     analogWrite(leftMotorSpeed, (input.num ^ 0xFF)); 
     analogWrite(rightMotorSpeed, 0xFF);
-    return
+    return;
   }
 
   // Set left wheel to max and reduce speed on right wheel
