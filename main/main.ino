@@ -11,12 +11,12 @@ struct twoByteSignedChar {
 
 
 // Motor 1 pins, left motor
-const unsigned char E1 = 5;
-const unsigned char M1 = 4;
+const unsigned char motor1Speed = 5;
+const unsigned char motor1Direction = 4;
 
 // Motor 2 pins, right motor
-const unsigned char E2 = 6;
-const unsigned char M2 = 7;
+const unsigned char motor2Speed = 6;
+const unsigned char motor2Direction = 7;
 
 
 // analog readings
@@ -29,8 +29,8 @@ void setup()
   for (int i = 4; i <= 7; i++)
     pinMode(i, OUTPUT);
 
-  digitalWrite(M1, HIGH);
-  digitalWrite(M2, HIGH);
+  digitalWrite(motor1Direction, HIGH);
+  digitalWrite(motor2Direction, HIGH);
 }
 
 void loop() 
@@ -71,12 +71,12 @@ void steer(twoByteSignedChar input)
 {
   if (input.sign) { // If negative
     // Set right wheel to max and reduce speed on left wheel
-    analogWrite(E1, (input.num ^ 0xFF)); 
-    analogWrite(E2, 0xFF);
+    analogWrite(motor1Speed, (input.num ^ 0xFF)); 
+    analogWrite(motor2Speed, 0xFF);
   } else {  // If positive
     // Set left wheel to max and reduce speed on right wheel
-    analogWrite(E1, 0xFF);
-    analogWrite(E1, (input.num ^ 0xFF));
+    analogWrite(motor1Speed, 0xFF);
+    analogWrite(motor2Speed, (input.num ^ 0xFF));
   }
 }
 
