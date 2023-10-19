@@ -2,7 +2,7 @@
 // hacky optimization for stupid shit
 // why use 2's complement when you can use 2 bytes
 struct twoByteSignedChar {
-  char num;
+  unsigned char num;
   bool sign;
 };
 
@@ -12,6 +12,14 @@ const char M1 = 4;
 // Motor 2 pins, right motor
 const char E2 = 6;
 const char M2 = 7;
+
+// Global variables for the PID controller
+// These need a value
+const float Pk, Ik, Dk;
+
+int lastError = 0;
+int Integral = 0;
+int IntegralResetRange = 8;
 
 void setup() 
 {
@@ -45,7 +53,29 @@ twoByteSignedChar PID(int input)
   int goal = 0; // Depending on your implementation of readArray(), change this to be the middle value.
   int error = input - goal;
 
-  // TODO
+  /* IN REVIEW
+  // Reset integral if error is ~0 
+  if (error > -IntegralResetRange && error < IntegralResetRange)
+    Integral = 0;
+  */
+
+  // P
+  int Proportional = error;
+
+  // I
+  Integral = min(Integral + error, );
+
+  // D
+  int Derivative = error - lastError;
+  lastError = error;
+  
+  // Calculates the motor speed and formats it as a twoByteSignedChar
+  short motorspeed = min(round((P * Pk) + (I * Ik) + (D * Dk)), 0xFF);
+  twoByteSignedChar output;
+  output.sign = isNegative(motorspeed);
+  output.num = (char) abs(motorspeed);
+
+  return output;
 }
 
 // Sets the speed of the wheel based oon the input
@@ -61,4 +91,4 @@ void steer(twoByteSignedChar input)
     analogWrite(E1, (input.num ^ 0xFF));
   }
 }
-
+// We might need to decrease the max speed as the motors are basically always maxed here.
