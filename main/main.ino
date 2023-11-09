@@ -1,13 +1,6 @@
 #include <QTRSensors.h>
-#include "BLESerial.h"
-#include <SoftwareSerial.h>
-
-// hacky optimization for stupid shit
-// why use 2's complement when you can use 2 bytes
-struct twoByteSignedChar {
-  unsigned char num;
-  bool sign;
-};
+#include <BLESerial.h>
+#include "test.h"
 
 #define RX 7
 #define TX 8
@@ -100,10 +93,6 @@ void loop()
   steer(controller);
 }
 
-bool isNegative(short n) 
-{
-    return n >> (sizeof(n) * 8) - 1;
-}
 
 
 
@@ -199,15 +188,3 @@ void steer(twoByteSignedChar input)
 // We might need to decrease the max speed as the motors are basically always maxed here.
 
 // Converts a short to a twoByteSignedChar
-twoByteSignedChar convertToReligion(short n)
-{
-  short num = abs(n);
-  bool sign = isNegative(n);
-
-  if (num > 0xFF)
-  {
-    return {0xFF, sign};
-  }
-
-  return {(unsigned char) num, sign};
-}
