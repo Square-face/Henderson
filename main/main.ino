@@ -1,5 +1,6 @@
 #include <QTRSensors.h>
-
+#include "BLESerial.h"
+#include <SoftwareSerial.h>
 
 // hacky optimization for stupid shit
 // why use 2's complement when you can use 2 bytes
@@ -8,9 +9,10 @@ struct twoByteSignedChar {
   bool sign;
 };
 
+#define RX 2
+#define TX 3
 
-const unsigned char calibrationSpeed = 0x50;
-
+const unsigned char calibrationSpeed = 0x80;
 
 // Motor 1 pins, left motor
 const unsigned char leftMotorDirection = 4;
@@ -20,33 +22,61 @@ const unsigned char leftMotorSpeed = 5;
 const unsigned char rightMotorSpeed = 6;
 const unsigned char rightMotorDirection = 7;
 
-
 // == state variables ==
 
 // calibration
-bool calibrating = false;
-unsigned short calibration_cycles = 0xFFFF;
+bool calibrating = true;
+unsigned short calibration_cycles = 64;
 
 // analog readings
-unsigned short sensor_readings[6];
+const uint8_t sensor_count = 6;
+uint16_t sensor_readings[sensor_count];
 QTRSensors sensors;
-
-
 
 // Global variables for the PID controller
 // These need a value
-const float Pk, Ik, Dk, IntegralMax;
+const float Pk = 0.07, Ik = 0, Dk = 0.7, IntegralMax = 1000;
 
 int lastError = 0;
 int Integral = 0;
 // int IntegralResetRange = 8; IN REVIEW
 
-
+// Something something BLE
+BLESerial ble(RX, TX);
 
 void setup() 
 {
+  ble.begin();
+  ble.setName("Henderson");
+
   sensors.setTypeAnalog();
-  sensors.setSensorPins((const unsigned char[]){A1, A2, A3, A4, A5, A6}, 6);
+  sensors.setSensorPins((const unsigned char[]){A0, A1, A2, A3, A4, A5}, sensor_count);
+  sensors.setEmitterPin(11);
+
+  delay(500);
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN, HIGH); // turn on Arduino's LED to indicate we are in calibration mode
+
+  calibrate();
+  digitalWrite(LED_BUILTIN, LOW);
+
+  Serial.begin(9600);
+  for (uint8_t i = 0; i < sensor_count; i++)
+  {
+    Serial.print(sensors.calibrationOn.minimum[i]);
+    Serial.print(' ');
+  }
+  Serial.println();
+
+  // print the calibration maximum values measured when emitters were on
+  for (uint8_t i = 0; i < sensor_count; i++)
+  {
+    Serial.print(sensors.calibrationOn.maximum[i]);
+    Serial.print(' ');
+  }
+  Serial.println();
+  Serial.println();
+  delay(1000);
   
   // Sets the motor pins to OUTPUT
   for (int i = 4; i <= 7; i++)
@@ -58,8 +88,16 @@ void setup()
 
 void loop() 
 {
-  // calibration check
-  if (calibrating) {calibrating = calibrate(); return;}
+  unsigned short sensorReadings = readArray();
+
+  twoByteSignedChar controller = PID(sensorReadings);
+
+  // Serial.print("Sensors: ");
+  Serial.print(sensorReadings);
+  Serial.print(" | ");
+  Serial.println((controller.sign) ? -controller.num : controller.num);
+
+  steer(controller);
 }
 
 bool isNegative(short n) 
@@ -87,18 +125,6 @@ unsigned short readArray()
  * false means the calibration is done
 */
 bool calibrate() {
-  if (!(calibration_cycles > 0)){
-    calibrating = false;
-
-      // unspin 
-      digitalWrite(leftMotorDirection, HIGH);
-      digitalWrite(rightMotorDirection, HIGH);
-
-      analogWrite(leftMotorSpeed, 0);
-      analogWrite(rightMotorSpeed, 0);
-  }
-  sensors.calibrate();
-  
   // spin 
   digitalWrite(leftMotorDirection, HIGH);
   digitalWrite(rightMotorDirection, LOW);
@@ -106,13 +132,26 @@ bool calibrate() {
   analogWrite(leftMotorSpeed, calibrationSpeed);
   analogWrite(rightMotorSpeed, calibrationSpeed);
 
-  calibration_cycles--;
+
+  Serial.println("Calibrating...");
+  for (int i = 0; i<calibration_cycles; i++){
+    sensors.calibrate();
+  }
+
+  // unspin 
+  digitalWrite(leftMotorDirection, HIGH);
+  digitalWrite(rightMotorDirection, HIGH);
+
+  analogWrite(leftMotorSpeed, 0);
+  analogWrite(rightMotorSpeed, 0);
+
+  Serial.println("Done!");
 }
 
 // PID controller function, takes an input from the 
 twoByteSignedChar PID(int input)
 {
-  int goal = (sizeof(sensor_readings) / sizeof(unsigned int))*500; // Depending on your implementation of readArray(), change this to be the middle value.
+  int goal = 3000; // Depending on your implementation of readArray(), change this to be the middle value.
   int error = input - goal;
 
   /* IN REVIEW
@@ -125,33 +164,50 @@ twoByteSignedChar PID(int input)
   int Proportional = error;
 
   // I
-  Integral = min(Integral + error, IntegralMax);
+  Integral = Integral + error;
 
   // D
   int Derivative = error - lastError;
   lastError = error;
   
   // Calculates the motor speed and formats it as a twoByteSignedChar
-  short motorspeed = min(round((Proportional * Pk) + (Integral * Ik) + (Derivative * Dk)), 0xFF);
-  twoByteSignedChar output;
-  output.sign = isNegative(motorspeed);
-  output.num = (unsigned char) abs(motorspeed);
-
+  short motorspeed = round((Proportional * Pk) + (Integral * Ik) + (Derivative * Dk));
+  twoByteSignedChar output = convertToReligion(motorspeed);
+  
   return output;
 }
+
+const uint8_t base_speed = 150;
 
 // Sets the speed of the wheel based on the input
 void steer(twoByteSignedChar input)
 {
-  if (input.sign) { // negative
+  uint8_t high_speed = base_speed + input.num; 
+  uint8_t low_speed = base_speed - input.num; 
+
+  if (!input.sign) { // negative
     // Set right wheel to max and reduce speed on left wheel
-    analogWrite(leftMotorSpeed, (input.num ^ 0xFF)); 
-    analogWrite(rightMotorSpeed, 0xFF);
+    analogWrite(leftMotorSpeed, low_speed); 
+    analogWrite(rightMotorSpeed, high_speed);
     return;
   }
 
   // Set left wheel to max and reduce speed on right wheel
-  analogWrite(leftMotorSpeed, 0xFF);
-  analogWrite(rightMotorSpeed, (input.num ^ 0xFF));
+  analogWrite(leftMotorSpeed, high_speed);
+  analogWrite(rightMotorSpeed, low_speed);
 }
 // We might need to decrease the max speed as the motors are basically always maxed here.
+
+// Converts a short to a twoByteSignedChar
+twoByteSignedChar convertToReligion(short n)
+{
+  short num = abs(n);
+  bool sign = isNegative(n);
+
+  if (num > 0xFF)
+  {
+    return {0xFF, sign};
+  }
+
+  return {(unsigned char) num, sign};
+}
