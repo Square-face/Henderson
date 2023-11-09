@@ -9,18 +9,18 @@ struct twoByteSignedChar {
   bool sign;
 };
 
-#define RX 2
-#define TX 3
+#define RX 7
+#define TX 8
 
 const unsigned char calibrationSpeed = 0x80;
 
 // Motor 1 pins, left motor
-const unsigned char leftMotorDirection = 4;
-const unsigned char leftMotorSpeed = 5;
+const unsigned char leftMotorDirection = 2;
+const unsigned char leftMotorSpeed = 3;
 
 // Motor 2 pins, right motor
-const unsigned char rightMotorSpeed = 6;
-const unsigned char rightMotorDirection = 7;
+const unsigned char rightMotorSpeed = 4;
+const unsigned char rightMotorDirection = 5;
 
 // == state variables ==
 
