@@ -1,6 +1,9 @@
+#ifndef SENSORS
+#define SENSORS
+
 #include <QTRSensors.h>
 
-const uint8_t sensor_count = 6;
+const uint8_t sensor_count = 8;
 uint16_t sensor_readings[sensor_count];
 QTRSensors sensors;
 
@@ -16,3 +19,5 @@ unsigned short readArray()
   sensors.read(sensor_readings);
   return sensors.readLineBlack(sensor_readings);
 }
+
+#endif
