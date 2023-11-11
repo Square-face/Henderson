@@ -20,4 +20,14 @@ unsigned short readArray()
   return sensors.readLineBlack(sensor_readings);
 }
 
+void calibrateSensors()
+{
+  sensors.calibrate();
+}
+
+void calibrateManually()
+{
+  
+}
+
 #endif
