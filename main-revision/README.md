@@ -1,22 +1,25 @@
-# ARDUINO CONTROLLER
+# CPIDS PROTCOLL
 ## Data
 
 Block size: Max 20 Bytes
-1 2 2 2 1
+1 4 4 4 1
 c p i d s
 
 ### Data structure
 - Command
   - first 3 are state
-  - Pk
-  - Ik
-  - Dk
-  - Speed
-  - Request
+  - Pk        >> 4
+  - Ik        >> 3
+  - Dk        >> 2
+  - Speed     >> 1
+  - Request   >> 0
 - P constant
 - I constant
 - D constant
 - Speed controll
+
+#### IDEA DO NOT IMPLEMENT
+last bit of command is checksum
 
 ### Example commands:
 - get-command --state "standby" -P π-3 -I 0.154255436 -D 0.9876841 -s 124 -r
@@ -37,7 +40,7 @@ c p i d s
   - run
   - calibrate
   - stop
-  - change (PID values)
+  - change (PID values and speed)
 - PID values
   - Pk
   - Ik

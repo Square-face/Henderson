@@ -34,6 +34,7 @@
             "includePath": [
                 "/Users/06elbr01/Library/Arduino15/packages/arduino/hardware/avr/1.8.6/cores/arduino",
                 "/Users/06elbr01/Library/Arduino15/packages/arduino/hardware/avr/1.8.6/variants/eightanaloginputs",
+                "/Users/06elbr01/Library/Arduino15/packages/arduino/hardware/avr/1.8.6/libraries/EEPROM/src",
                 "/Users/06elbr01/Documents/Arduino/libraries/QTRSensors",
                 "/Users/06elbr01/Documents/Arduino/libraries/BLESerial/src",
                 "/Users/06elbr01/Library/Arduino15/packages/arduino/hardware/avr/1.8.6/libraries/SoftwareSerial/src",
