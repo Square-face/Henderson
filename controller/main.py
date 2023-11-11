@@ -1,24 +1,43 @@
-import asyncio
-from bleak import BleakClient
+from contextlib import asynccontextmanager
+from fastapi import FastAPI, WebSocket
+from bluetooth import Bluetooth
+from magic import Command
+from manager import ConnectionManager
+from bleak.backends.characteristic import BleakGATTCharacteristic
+import json
 
-address = "56EFC9A6-7D00-FAC4-9EC4-55E65D5F7A22"
-MODEL_NBR_UUID = "00002a25-0000-1000-8000-00805f9b34fb"
-COM_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
+henderson = Bluetooth()
+manager = ConnectionManager()
 
-async def main(address):
-    async with BleakClient(address) as client:
-        while True:
-            #model_number = await client.read_gatt_char(MODEL_NBR_UUID)
-            
-            #print("Model Number: {0}".format("".join(map(chr, model_number))))
-            string = input("Message to send: ")
-            msg = f"{string}\n"
+def callback(sender: BleakGATTCharacteristic, data: bytearray):
+    print(f"{sender}: {data.hex()}")
 
-            try:
-                print(f"> {msg}", end="")
-                await client.write_gatt_char(COM_UUID, msg.encode(), False)
-            except Exception as identifier:
-                pass
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+
+    # Attempt to connect bluetooth device
+    await henderson.connect()
+    await henderson.register(callback)
+
+    yield
+
+    # Disconnect connected device
+    await henderson.disconnect()
 
 
-asyncio.run(main(address))
+app = FastAPI(lifespan=lifespan)
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+
+    while True:
+        message = await websocket.receive_text()
+        data = json.loads(message)
+
+        cmd = Command.get_command(**data)
+        await henderson.sendHex(cmd.get_cpids())
+
+
+
+        
