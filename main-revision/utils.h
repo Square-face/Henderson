@@ -1,11 +1,13 @@
 #ifndef UTILS
 #define UTILS
 
-#include "sensors.h"
+
 #include <stdlib.h>
 
-#define EEPROMDataSize 4
+
 #define CPIDSLength sizeof(commandStructure)
+#define sensor_count 8
+
 
 // State enumerators
 enum states
@@ -14,25 +16,35 @@ enum states
   NOTHING,
   // If the robot is on standby
   STANDBY,
+  // If the robot is currently running
+  RUNNING,
   // If the robot is currently calibrating
   CALIBRATING,
   // If the robot is calibrating, manually moved by us
-  CALIBRATINGMANUAL,
-  // If the robot is currently running
-  RUNNING
+  CALIBRATING_MANUAL
 };
+
 
 // Adress series for EEPROM data
 enum EEPROMAdresses
 {
-  NoADRESS,
-  PkADRESS,
-  IkADRESS,
-  DkADRESS,
-  SpADRESS,
-  CalMaxADRESS,
-  CalMinADRESS
+  PkADRESS = 0,       // EEPROM Adress for Pk constant
+  IkADRESS = 4,       // EEPROM Adress for Ik constant
+  DkADRESS = 8,       // EEPROM Adress for Dk constant
+  SpADRESS = 9,       // EEPROM Adress for speed constant
+  CalMaxADRESS = 10,  // EEPROM Adress for calibration maximum
+  CalMinADRESS = 26   // EEPROM Adress for calibration minimum
 };
+
+
+enum motorDirections
+{
+  LEFT_FORWARD = LOW,
+  LEFT_BACKWARD = HIGH,
+  RIGHT_FORWARD = LOW,
+  RIGHT_BACKWARD = HIGH
+};
+
 
 // hacky optimization for stupid shit
 // why use 2's complement when you can use 2 bytes
@@ -40,6 +52,7 @@ struct twoByteSignedChar {
   unsigned char num;
   bool sign;
 };
+
 
 // Structure of the status to send
 struct statusStructure {
@@ -50,6 +63,7 @@ struct statusStructure {
   uint8_t speed;
 };
 
+
 // Structure of the command recieved
 struct commandStructure {
   uint8_t command;
@@ -59,6 +73,7 @@ struct commandStructure {
   uint8_t speed;
 };
 
+
 // Storage for the config, used when following the line.
 struct config
 {
@@ -66,9 +81,11 @@ struct config
   float Ik;
   float Dk;
   uint8_t speed;
-  u16 calibrationMax;
-  u16 calibrationMin;
+  uint16_t calibrationMax[sensor_count];
+  uint16_t calibrationMin[sensor_count];
 };
+
+
 // State variable to be used in main function primarily
 // Defined in utils.h
 uint8_t state;
@@ -79,11 +96,27 @@ uint8_t state;
 uint8_t stateCommand;
 
 
+// Current settings containing the Pk, Ik, Dk, speed and calibration settings
+config settings;
+
+
+// Motor 1 left motor direction pin
+const unsigned char leftMotorDirection = 2;
+// Motor 1 left motors speed pin
+const unsigned char leftMotorSpeed = 3;
+
+// Motor 2 right motor speed pin
+const unsigned char rightMotorSpeed = 5;
+// Motor 2 right motor direction pin
+const unsigned char rightMotorDirection = 4;
+
+
 // Returns true if the number is negative, otherwise it returns false
 bool isNegative(short n) 
 {
     return (n >> (sizeof(n) * 8)) - 1;
 }
+
 
 // Converts a short into a twoByteSignedChar, a structure containing a number and a bool depending on the sign
 twoByteSignedChar convertToReligion(short n)
@@ -98,6 +131,7 @@ twoByteSignedChar convertToReligion(short n)
 
   return {(unsigned char) num, sign};
 }
+
 
 commandStructure hexStringToBytes(const String s) {
   commandStructure output;
@@ -129,9 +163,11 @@ commandStructure hexStringToBytes(const String s) {
   Serial.println(ShexValue); */
 }
 
+
 void changeState(states requestedState)
 {
   stateCommand = requestedState;
 }
+
 
 #endif

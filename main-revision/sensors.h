@@ -1,18 +1,23 @@
 #ifndef SENSORS
 #define SENSORS
 
-#include <QTRSensors.h>
 
-const uint8_t sensor_count = 8;
+#include <QTRSensors.h>
+#include "utils.h"
+
+
 uint16_t sensor_readings[sensor_count];
 QTRSensors sensors;
+
 
 void initializeSensorPins()
 {
   sensors.setTypeAnalog();
   sensors.setSensorPins((const unsigned char[]){A0, A1, A2, A3, A4, A5, A6, A7}, sensor_count);
-  sensors.setEmitterPin(11);
+  sensors.setEmitterPin(12);
+  sensors.calibrate();
 }
+
 
 unsigned short readArray()
 {
@@ -20,14 +25,40 @@ unsigned short readArray()
   return sensors.readLineBlack(sensor_readings);
 }
 
-void calibrateSensors()
+
+void endCalibration()
 {
-  sensors.calibrate();
+  analogWrite(leftMotorSpeed, 0);
+  analogWrite(rightMotorSpeed, 0);
+
+  digitalWrite(leftMotorDirection, LEFT_FORWARD);
+  digitalWrite(rightMotorDirection, RIGHT_FORWARD);
+
+  for (int i = 0; i < sensor_count; i++)
+  {
+    EEPROM.put(CalMaxADRESS + i * sizeof(uint16_t), sensors.calibrationOn.maximum[i]);
+    EEPROM.put(CalMinADRESS + i * sizeof(uint16_t), sensors.calibrationOn.minimum[i]);
+  }
+  
+  sensors.emittersOff();
+
+  Serial.print("Calibration maximum: ");
+  for (int i = 0; i < sensor_count; i++)
+    Serial.print(String(sensors.calibrationOn.maximum[i]) + " ");
+  Serial.println();
+
+  Serial.print("Calibration minimum: ");
+  for (int i = 0; i < sensor_count; i++)
+    Serial.print(String(sensors.calibrationOn.minimum[i]) + " ");
+  Serial.println();
 }
 
-void calibrateManually()
+
+uint16_t readLinePosition()
 {
-  
+  sensors.read(sensor_readings);
+  return sensors.readLineBlack(sensor_readings);
 }
+
 
 #endif

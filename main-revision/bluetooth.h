@@ -47,7 +47,6 @@ commandStructure readAvailable()
   for (int i = 0; ble.available() > 0; i++)
   {
     temp[i] = ble.read();
-    Serial.println(temp[i], 16);
   }
   
   output.command = temp[0];
@@ -94,33 +93,6 @@ commandStructure readAvailableSerial()
   Serial.println(); // Move to the next line
 
   return hexStringToBytes(serialTemp);
-
-  for (int i = 0; i < sizeof(commandStructure); i++) 
-  {
-    Serial.print("temp " + String(i) + ": "); 
-    Serial.print(temp[i]);
-    Serial.println();
-  }
-
-  float tempFloat;
-  for (int i = 0; i < sizeof(float); i++)
-  {
-    Serial.println(i);
-    *(&tempFloat + i) = temp[1 + i];
-    Serial.println(tempFloat);
-  }
-  Serial.println();
-  Serial.println(tempFloat);
-
-  commandStructure output;
-  output.command = *temp;
-  Serial.println(*(float*)(temp+1));
-  output.Pk = *(float*)(temp+1);
-  output.Ik = *(float*)(temp+5);
-  output.Dk = *(float*)(temp+9);
-  output.speed = *(temp+13);
-
-  return output;
 }
 
 
@@ -128,12 +100,11 @@ commandStructure readAvailableSerial()
 void sendCurrentStatus()
 {
   config temp;
-  EEPROM.get(PkADRESS * EEPROMDataSize, temp.Pk);
-  EEPROM.get(IkADRESS * EEPROMDataSize, temp.Ik);
-  EEPROM.get(DkADRESS * EEPROMDataSize, temp.Dk);
-  EEPROM.get(SpADRESS * EEPROMDataSize, temp.speed);
+  EEPROM.get(PkADRESS, temp.Pk);
+  EEPROM.get(IkADRESS, temp.Ik);
+  EEPROM.get(DkADRESS, temp.Dk);
+  EEPROM.get(SpADRESS, temp.speed);
 
-  Serial.println(EEPROM.read(PkADRESS));
   Serial.print("State: " + String(state, 8));
   Serial.print(" Pk: " + String(temp.Pk, 8));
   Serial.print(" Ik: " + String(temp.Ik, 8));
@@ -170,35 +141,32 @@ void handleIncoming()
     bleReadData = readAvailableSerial();
   }
 
-  // Resets the state command
-  stateCommand = NOTHING;
-
   // Check that a command has actually been recieved
   if (bleReadData.command != 0)
   {
     // First 3 bits (from the left) represent the state
-    stateCommand = (bleReadData.command & 0b11100000) >> 5;
+    stateCommand = (bleReadData.command) >> 5;
 
     // If the correct bits are flipped in the command state, overwrite the PID constants and speed.
     if ((bleReadData.command & 0b00010000) >> 4) 
     {
-      Serial.println("Pk size: " + String(sizeof(bleReadData.Pk)));
-      Serial.println("Before Pk: " + String(bleReadData.Pk)); 
-      EEPROM.put(EEPROMDataSize * PkADRESS, bleReadData.Pk); 
-      EEPROM.get(EEPROMDataSize * PkADRESS, bleReadData.Pk);
-      Serial.println("After Pk: " + String(bleReadData.Pk)); 
+      EEPROM.put(PkADRESS, bleReadData.Pk); 
+      settings.Pk = bleReadData.Pk;
     }
     if ((bleReadData.command & 0b00001000) >> 3) 
     {
-      EEPROM.put(EEPROMDataSize * IkADRESS, bleReadData.Ik);
+      EEPROM.put(IkADRESS, bleReadData.Ik);
+      settings.Ik = bleReadData.Ik;
     }
     if ((bleReadData.command & 0b00000100) >> 2) 
     {
-      EEPROM.put(EEPROMDataSize * DkADRESS, bleReadData.Dk);
+      EEPROM.put(DkADRESS, bleReadData.Dk);
+      settings.Dk = bleReadData.Dk;
     }
     if ((bleReadData.command & 0b00000010) >> 1) 
     {
-      EEPROM.put(EEPROMDataSize * SpADRESS, bleReadData.speed);
+      EEPROM.put(SpADRESS, bleReadData.speed);
+      settings.speed = bleReadData.speed;
     }
 
     Serial.println("Done with changing the values");
