@@ -18,11 +18,11 @@ class Bluetooth:
             print("Failed to connect to device. Site will still work but no data will be sent")
 
     async def sendHex(self, msg: str):
-        print(f"sending {msg[2:]}")
+        print(f"> {msg[2:]}")
         try:
             await self.client.write_gatt_char(COM_UUID, bytes.fromhex(msg[2:]), False)
         except Exception as _:
-            print("error recived, should be a good thing, dw it makes sense")
+            print("Failed to send")
 
     async def register(self, callback):
         await self.client.start_notify(COM_UUID, callback)
