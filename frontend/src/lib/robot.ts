@@ -12,6 +12,10 @@ class Robot {
     this.socket = new Socket();
     this.config = writable(defaultConfig);
   }
+  
+  get $(){
+    return this.config
+  }
 
   /**
    * Get the raw config.
