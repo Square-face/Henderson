@@ -1,9 +1,10 @@
-import { type Config, type ConfigMask , MaskOn, type Log } from "./types";
+import { type Config, type ConfigMask , MaskOn, type Log, type StatusUpdate, State } from "./types";
 
 const ws_url = "ws://192.168.1.192:8000/ws"
 
 interface Handlers {
   log?: ((data: Log) => any) 
+  status?: ((data: StatusUpdate) => any) 
 }
 
 // class for managing communication with the server
@@ -37,14 +38,28 @@ export class Socket {
     let msg = ev.data;
     let data = JSON.parse(msg);
 
+    if (this.handlers === undefined) { return; }
+
     switch (data.type) {
       case "log":
-        if (this.handlers === undefined) { return; }
         if (this.handlers.log === undefined) { return; }
 
         this.handlers.log(data)
         
         break;
+
+      case "status":
+        if (this.handlers.status === undefined) { return; }
+        
+        let states = Object.values(State)
+
+        if (data.state == 0) data.state = null
+        else data.state = states.at(data.state-1)
+
+        console.log(data);
+        
+
+        this.handlers.status(data)
 
       default:
         break;

@@ -1,6 +1,6 @@
 import { writable, type Writable } from 'svelte/store';
 import { Socket } from './socket';
-import { type Config, defaultConfig, type Log } from './types';
+import { type Config, defaultConfig, type Log, type StatusUpdate } from './types';
 
 
 class Robot {
@@ -16,6 +16,15 @@ class Robot {
       this.log_buffer.update((buffer: Log[]) => {
         buffer.unshift(data)
         return buffer.slice(0, 100)
+      })
+    }
+
+    this.socket.handlers.status = (data: StatusUpdate) => {
+      this.config.update((prev:Config) => {
+        return {
+          ...prev,
+          ...data
+        }
       })
     }
 

@@ -27,6 +27,14 @@ export interface ConfigMask {
 export type ConfigField = 'State' | 'Pk' | 'Ik' | 'Dk' | 'Speed';
 
 
+export interface StatusUpdate {
+  type: 'status'
+  state: State | null,
+  p?: number,
+  i?: number,
+  d?: number,
+  speed?: number,
+}
 
 export interface Log {
   type: 'log'
