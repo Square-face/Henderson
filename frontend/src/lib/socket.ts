@@ -57,7 +57,7 @@ export class Socket {
         else data.state = states.at(data.state-1)
 
         console.log(data);
-        
+        data.Speed = data.speed
 
         this.handlers.status(data)
 
