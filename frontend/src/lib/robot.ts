@@ -66,7 +66,7 @@ class Robot {
    *
    * This method does not return anything by itself. Instead it will trigger a event when the server gets a response from the robot with the new values and will subsequently replace the saved local config with the one supplised by the server
    * */
-  what_the_hell_are_you_doing() {
+  what_the_hell_are_you_doing(_: '?') {
     this.socket.requestConfig();
   }
 }
