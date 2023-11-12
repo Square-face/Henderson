@@ -22,11 +22,11 @@ async def callback(_: BleakGATTCharacteristic, data: bytearray):
     if start_length == 0 and len(buffer) != 20:
         buffer.clear()
 
-    if start_length != 0 and len(buffer) == 22:
+    if start_length != 0 and len(buffer) == 38:
         await manager.broadcast(decode_log(buffer))
         buffer.clear()
 
-    elif start_length != 0 and len(buffer) != 22:
+    elif start_length != 0 and len(buffer) != 38:
         buffer.clear()
 
 @asynccontextmanager
