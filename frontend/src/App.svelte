@@ -22,6 +22,15 @@
   //   logs = value;
   // })
   
+  const updateState = (state: State) => {
+    Henderson.config.update((previous: Config) => {
+      return {
+        ...previous,
+        State: state
+      }
+    });
+  }
+
   const updateConfig = (field: ConfigField) => {
     switch(field)
     {
@@ -76,6 +85,19 @@
         }
     }
   }
+
+  const sendButton = () => {
+    Henderson.write();
+  }
+
+  const requestButton = () => {
+    Henderson.what_the_hell_are_you_doing('?');
+  }
+
+
+  // const stopButton = () => {
+  //   Henderson.config.update
+  // }
 </script>
 
 <main>
@@ -83,9 +105,9 @@
     <div class="send-section">
       <h1>Misc</h1>
       <div class="misc">
-        <StateDropdown />
-        <Button>Send</Button>
-        <Button>Request</Button>
+        <StateDropdown event={updateState}/>
+        <Button event={sendButton}>Send</Button>
+        <Button event={requestButton}>Request</Button>
         <Button>Stop</Button>
       </div>
       <div class="PID">

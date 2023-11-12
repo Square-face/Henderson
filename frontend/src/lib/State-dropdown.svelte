@@ -1,16 +1,21 @@
-<script>
+<script lang="ts">
   import { State } from "./types";
 
   const stateArray = Object.values(State);
 
   let currentState = State.STANDBY;
+
+  export let event = (state: State) => {};
 </script>
 
 <div class="dropdown">
   <button class="dropbtn">{currentState}</button>
   <div class="dropdown-content">
     {#each stateArray as state}
-      <button type="button" class="state-button" on:click={() => {currentState = state;}}>{state}</button>
+      <button type="button" class="state-button" on:click={() => {
+        currentState = state;
+        event(state);
+      }}>{state}</button>
     {/each}
   </div>
 </div>

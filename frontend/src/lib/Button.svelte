@@ -1,5 +1,5 @@
 <script>
-  export const event = () => 0;
+  export let event = () => {};
 </script>
 
 <button type="button" on:click={event}><slot /></button>
