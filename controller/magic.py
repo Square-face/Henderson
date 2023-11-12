@@ -1,9 +1,18 @@
 import subprocess
+from enum import Enum
+
+
+class State(Enum):
+    NOTHING = 0
+    STANDBY = 1
+    RUNNING = 2
+    CALIBRATING = 3
+    CALIBRATING_MANUAL = 4
 
 
 class Command:
     def __init__(self):
-        self.target_state = None
+        self.target_state = State.NOTHING
         
         self.proportional = None
         self.integral = None
@@ -17,9 +26,8 @@ class Command:
         cmd = ["../command-generator/target/release/command-generator"]
 
 
-        if self.target_state is not None:
-            cmd.append("--state")
-            cmd.append(self.target_state)
+        cmd.append("--state")
+        cmd.append(self.target_state.name.lower())
 
 
         if self.proportional is not None:
@@ -50,13 +58,33 @@ class Command:
         print(cpids)
         return cpids.stdout.split("\n")[-2]
 
+    def get_json(self):
+        cmd = {}
+
+        if self.target_state is not None:
+            cmd["state"] = self.target_state.value
+
+        if self.proportional is not None:
+            cmd["proportional"] = self.proportional
+
+        if self.integral is not None:
+            cmd["integral"] = self.integral
+
+        if self.derivative is not None:
+            cmd["derivative"] = self.derivative
+
+        if self.speed is not None:
+            cmd["speed"] = self.speed
+
+        return cmd
+
     @staticmethod
-    def get_command(**attr):
+    def parse(**attr):
         
         cmd = Command()
 
         if "state" in attr.keys():
-            cmd.target_state = attr["state"]
+            cmd.target_state = State(attr["state"])
 
         if "Pk" in attr.keys():
             cmd.proportional = attr["Pk"]
