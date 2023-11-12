@@ -37,7 +37,7 @@ signed char output;
 
 
 // arbitrary value to base the speed around
-uint8_t baseSpeed = 150;
+uint16_t baseSpeed = 150;
 
 
 
@@ -282,8 +282,8 @@ void running()
   output = constrain(result, -128, 127);
 
   // calculate motor speeds
-  uint8_t left = round((baseSpeed + output) * proportionalSpeed);
-  uint8_t right = round((baseSpeed - output) * proportionalSpeed);
+  uint8_t left = constrain(round((baseSpeed + output) * proportionalSpeed), 0, 255);
+  uint8_t right = constrain(round((baseSpeed - output) * proportionalSpeed), 0, 255);
 
   // Set motor speeds
   analogWrite(leftMotorSpeed, left);
