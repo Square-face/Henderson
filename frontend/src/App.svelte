@@ -11,7 +11,7 @@
   import { createEventDispatcher } from 'svelte';
   
   let config: Config;
-  let logs: Log[] = Henderson.log_buffer;
+  let logs: Log[];
   let PkToggle: boolean, IkToggle: boolean, DkToggle: boolean, SpeedToggle: boolean;
 
   Henderson.config.subscribe(value => {
