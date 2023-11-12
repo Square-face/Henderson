@@ -15,7 +15,7 @@
 
 // Limit how over verbose logs are sent over BLE
 // Higher value will result in lower performance loss but more inacurate data
-#define CYCLES_PER_LOG 100
+#define CYCLES_PER_LOG 10
 
 
 // variables for verbose logging
@@ -137,18 +137,21 @@ void standby()
   {
     case CALIBRATING:
       Serial.println("State change: Standby -> Calibrating");
+      sensors.emittersOn();
       stateCommand = NOTHING;
       state = CALIBRATING;
       return;
 
     case CALIBRATING_MANUAL:
       Serial.println("State change: Standby -> CalibratingManual");
+      sensors.emittersOn();
       stateCommand = NOTHING;
       state = CALIBRATING_MANUAL;
       return;
     
     case RUNNING:
       Serial.println("State change: Standby -> Running");
+      // sensors.emittersOn();
       proportionalSpeed = settings.speed / 255.0;
       stateCommand = NOTHING;
       state = RUNNING;
@@ -229,14 +232,15 @@ void calibratingManual()
       Serial.println("State change: calibratingManual -> Standby");
       endCalibration();
       state = STANDBY;
+      stateCommand = NOTHING;
       return;
     
     case CALIBRATING:
       Serial.println("State change: calibratingManual -> Calibrating");
       state = CALIBRATING;
+      stateCommand = NOTHING;
       return;
   }
-  stateCommand = NOTHING;
 
   sensors.calibrate(QTRReadMode::On);
 }
@@ -271,6 +275,7 @@ void running()
   // Get line
   input = readLinePosition();
   error = input - SETPOINT;
+  baseSpeed = round(255.0 - (abs(error) / 32.0));
 
   // PID
   P = settings.Pk * error;
@@ -320,6 +325,8 @@ void running()
   ble_write(output);        // PID output           2 32
   ble_write(left);          // Left motor speed     1 33
   ble_write(right);         // Right motor speed    1 34
+  for (u8 i = 0; i < sensor_count; i++)
+    ble_write(sensor_readings[i]); // Raw sensor data    16 50
 
  // reset counters
   last_log_cycles = 0;
