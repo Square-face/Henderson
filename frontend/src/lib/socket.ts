@@ -1,9 +1,9 @@
-import { type Config, type ConfigMask , MaskOn } from "./types";
+import { type Config, type ConfigMask , MaskOn, type Log } from "./types";
 
 const ws_url = "ws://192.168.1.192:8000/ws"
 
 interface Handlers {
-  log?: ((data: any) => any) 
+  log?: ((data: Log) => any) 
 }
 
 // class for managing communication with the server

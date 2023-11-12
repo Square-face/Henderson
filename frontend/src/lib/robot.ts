@@ -1,16 +1,21 @@
 import { writable, type Writable } from 'svelte/store';
 import { Socket } from './socket';
-import { type Config, defaultConfig } from './types';
+import { type Config, defaultConfig, type Log } from './types';
 
 
 class Robot {
   
   config: Writable<Config>;
+  log_buffer: Log[] = [];
   private socket: Socket;
+
 
   constructor() {
     this.socket = new Socket();
-    this.socket.handlers.log = (data: any) => {
+    this.socket.handlers.log = (data: Log) => {
+      this.log_buffer.unshift(data)
+      this.log_buffer = this.log_buffer.slice(0, 100)
+      console.log(this.log_buffer.length)
 
     }
     this.config = writable(defaultConfig);
