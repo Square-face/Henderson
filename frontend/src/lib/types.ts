@@ -44,6 +44,8 @@ export interface Log {
 
 
 
+
+
 // defaults
 
 export const defaultConfig: Config = {

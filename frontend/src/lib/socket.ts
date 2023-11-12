@@ -20,6 +20,7 @@ export class Socket {
     this.websocket.addEventListener("open", (ev: Event) => {this.onOpen(ev)});
     this.websocket.addEventListener("message", (ev: MessageEvent) => {this.onMessage(ev)});
     this.websocket.addEventListener("close", (ev: Event) => {this.onClose(ev)});
+
   }
 
   onError(ev: Event) {
@@ -27,6 +28,7 @@ export class Socket {
   }
 
   onOpen(ev: Event) {
+    this.requestConfig()
     console.log("Websocket connected", ev)
   }
 
@@ -55,5 +57,10 @@ export class Socket {
 
   sendConfig(data: Config, mask: ConfigMask = MaskOn) {}
 
-  requestConfig() {}
+  requestConfig() {
+    let data = {
+      request_status: true
+    }
+    this.websocket.send(JSON.stringify(data))
+  }
 }

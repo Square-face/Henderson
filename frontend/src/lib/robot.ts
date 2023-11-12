@@ -6,19 +6,21 @@ import { type Config, defaultConfig, type Log } from './types';
 class Robot {
   
   config: Writable<Config>;
-  log_buffer: Log[] = [];
+  log_buffer: Writable<Log[]>;
   private socket: Socket;
 
 
   constructor() {
     this.socket = new Socket();
     this.socket.handlers.log = (data: Log) => {
-      this.log_buffer.unshift(data)
-      this.log_buffer = this.log_buffer.slice(0, 100)
-      console.log(this.log_buffer.length)
-
+      this.log_buffer.update((buffer: Log[]) => {
+        buffer.unshift(data)
+        return buffer.slice(0, 100)
+      })
     }
+
     this.config = writable(defaultConfig);
+    this.log_buffer = writable([]);
   }
   
   get $(){
