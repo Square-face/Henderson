@@ -251,6 +251,25 @@ void ble_write(T data)
   }
 }
 
+template <typename T>
+void srl_write(T data)
+{
+  byte* pData = reinterpret_cast<byte*>(&data);
+
+  for (char i = 0; i < sizeof(data); i++) {
+    String hexString = String(pData[i], 16);
+    for (char j = 0; j < (2 - hexString.length()); j++)
+    {
+      Serial.print("0");
+    }
+    Serial.print(hexString);
+    Serial.print(" ");
+  }
+
+  Serial.print("- ");
+  Serial.println(sizeof(data));
+}
+
 // Runs whenever the robot has the RUNNING state
 void running()
 {
@@ -316,9 +335,10 @@ void running()
   }
 
   int delta_t = millis() - last_log_millis;
+  char mask = 0x0;
 
   // Write logs to BLE
-  ble_write(0b00000000);    // Log indication       1 1
+  ble_write(mask);          // Log indication       1 1
   ble_write(CYCLES_PER_LOG);// Log interval         1 2
   ble_write(delta_t);       // Time since last log  2 4
   ble_write(input);         // Line position        2 8
@@ -329,7 +349,7 @@ void running()
   ble_write(left);          // Left motor speed     1 33
   ble_write(right);         // Right motor speed    1 34
 
-  // reset counters
+ // reset counters
   last_log_cycles = 0;
   last_log_millis = millis();
 }
