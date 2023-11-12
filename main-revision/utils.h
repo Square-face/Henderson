@@ -9,6 +9,9 @@
 #define sensor_count 8
 
 
+#define changeState(requestedState) stateCommand = requestedState
+
+
 // State enumerators
 enum states
 {
@@ -111,28 +114,6 @@ const unsigned char rightMotorSpeed = 5;
 const unsigned char rightMotorDirection = 4;
 
 
-// Returns true if the number is negative, otherwise it returns false
-bool isNegative(short n) 
-{
-    return (n >> (sizeof(n) * 8)) - 1;
-}
-
-
-// Converts a short into a twoByteSignedChar, a structure containing a number and a bool depending on the sign
-twoByteSignedChar convertToReligion(short n)
-{
-  short num = abs(n);
-  bool sign = isNegative(n);
-
-  if (num > 0xFF)
-  {
-    return {0xFF, sign};
-  }
-
-  return {(unsigned char) num, sign};
-}
-
-
 commandStructure hexStringToBytes(const String s) {
   commandStructure output;
 
@@ -161,12 +142,6 @@ commandStructure hexStringToBytes(const String s) {
   Serial.println(IfloatValue);
   Serial.println(DfloatValue);
   Serial.println(ShexValue); */
-}
-
-
-void changeState(states requestedState)
-{
-  stateCommand = requestedState;
 }
 
 

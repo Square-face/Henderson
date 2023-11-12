@@ -11,10 +11,13 @@ body {
   gap: 10%;
 }
 
+<<<<<<< HEAD
 p {
   color: black;
 }
 
+=======
+>>>>>>> 3dfc919d38f6f78b3c1f988098bb82d641095187
 .sliderBlockContainer {
   padding: 8px;
   display: grid;

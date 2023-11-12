@@ -184,4 +184,36 @@ void handleIncoming()
 
 }
 
+
+template <typename T>
+void ble_write(T data)
+{
+  byte* pData = reinterpret_cast<byte*>(&data);
+
+  for (char i = 0; i < sizeof(data); i++) {
+      ble.write(pData[i]);
+  }
+}
+
+
+template <typename T>
+void srl_write(T data)
+{
+  byte* pData = reinterpret_cast<byte*>(&data);
+
+  for (char i = 0; i < sizeof(data); i++) {
+    String hexString = String(pData[i], 16);
+    for (char j = 0; j < (2 - hexString.length()); j++)
+    {
+      Serial.print("0");
+    }
+    Serial.print(hexString);
+    Serial.print(" ");
+  }
+
+  Serial.print("- ");
+  Serial.println(sizeof(data));
+}
+
+
 #endif
