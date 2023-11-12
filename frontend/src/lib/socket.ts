@@ -70,7 +70,13 @@ export class Socket {
     console.log("Websocket disconnected", ev);
   }
 
-  sendConfig(data: Config, mask: ConfigMask = MaskOn) {}
+  sendConfig(data: Config, mask: ConfigMask = MaskOn) {
+    let msg = {
+      ...data,
+      state: Object.values(State).indexOf(data.State)
+    }
+    this.websocket.send(JSON.stringify(msg))
+  }
 
   requestConfig() {
     let data = {
