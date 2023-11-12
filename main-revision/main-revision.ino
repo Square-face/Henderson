@@ -12,10 +12,10 @@
 // Having this enabled could seriously reduce performance.
 #define VERBOSE true
 
+
 // Limit how over verbose logs are sent over BLE
 // Higher value will result in lower performance loss but more inacurate data
 #define CYCLES_PER_LOG 100
-
 
 
 // variables for verbose logging
@@ -241,34 +241,6 @@ void calibratingManual()
   sensors.calibrate(QTRReadMode::On);
 }
 
-template <typename T>
-void ble_write(T data)
-{
-  byte* pData = reinterpret_cast<byte*>(&data);
-
-  for (char i = 0; i < sizeof(data); i++) {
-      ble.write(pData[i]);
-  }
-}
-
-template <typename T>
-void srl_write(T data)
-{
-  byte* pData = reinterpret_cast<byte*>(&data);
-
-  for (char i = 0; i < sizeof(data); i++) {
-    String hexString = String(pData[i], 16);
-    for (char j = 0; j < (2 - hexString.length()); j++)
-    {
-      Serial.print("0");
-    }
-    Serial.print(hexString);
-    Serial.print(" ");
-  }
-
-  Serial.print("- ");
-  Serial.println(sizeof(data));
-}
 
 // Runs whenever the robot has the RUNNING state
 void running()
