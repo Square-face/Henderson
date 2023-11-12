@@ -24,6 +24,8 @@ export interface ConfigMask {
   Speed: boolean,
 }
 
+export type ConfigField = 'State' | 'Pk' | 'Ik' | 'Dk' | 'Speed';
+
 export const defaultConfig: Config = {
   State: State.STANDBY,
   Pk: 0,

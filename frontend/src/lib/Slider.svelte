@@ -3,11 +3,12 @@
   export let value = 0;
   export let checked = false;
   export let text = "default text"
+  export const update: Function = () => 0;
 </script>
 
 <div>
   <input type="number" max={max} step={(max < 1) ? max / 10000 : 1} class="slider-text" bind:value/>
-  <input type="range" max={max} step={(max < 1) ? max / 10000 : 1} bind:value>
+  <input type="range" max={max} step={(max < 1) ? max / 10000 : 1} bind:value on:change={()=>{update(value)}}>
   <input type="number" class="slider-text" bind:value={max}/>
   <div class="span-check-block">
     <span>{text}</span>
