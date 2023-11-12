@@ -72,7 +72,7 @@ export class Socket {
 
   sendConfig(data: Config, mask: ConfigMask = MaskOn) {
     let msg = {
-      state: Object.values(State).indexOf(data.State),
+      state: Object.values(State).indexOf(data.State) + 1,
       Pk: data.Pk.toString(),
       Ik: data.Ik.toString(),
       Dk: data.Dk.toString(),
