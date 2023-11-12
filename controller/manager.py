@@ -12,8 +12,10 @@ class ConnectionManager:
         self.active_connections.remove(websocket)
 
     async def send_personal_message(self, message: str, websocket: WebSocket):
+        print(f"ws > {message}")
         await websocket.send_text(message)
 
     async def broadcast(self, message: str):
+        print(f"ws > {message}")
         for connection in self.active_connections:
             await connection.send_text(message)
