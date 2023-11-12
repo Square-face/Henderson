@@ -88,6 +88,7 @@
 
   const sendButton = () => {
     Henderson.write();
+    Henderson.what_the_hell_are_you_doing('?');
   }
 
   const requestButton = () => {
