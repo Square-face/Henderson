@@ -76,7 +76,7 @@ export class Socket {
       Pk: data.Pk.toString(),
       Ik: data.Ik.toString(),
       Dk: data.Dk.toString(),
-      Speed: data.Speed,
+      speed: data.Speed,
     }
     this.websocket.send(JSON.stringify(msg))
   }
