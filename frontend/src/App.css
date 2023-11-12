@@ -1,208 +1,80 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
 body {
   margin: 0;
-  height: 100vh;
-}
-
-.appContainer {
-  margin: 8px;
-  display: grid;
-  grid-auto-flow: rows;
-  grid-template-rows: 1fr 1fr;
-  gap: 10%;
-}
-
-<<<<<<< HEAD
-p {
-  color: black;
-}
-
-=======
->>>>>>> 3dfc919d38f6f78b3c1f988098bb82d641095187
-.sliderBlockContainer {
-  padding: 8px;
-  display: grid;
-  height: 20vh;
-  gap: 10%;
-}
-
-.slidercontainer {
-  width: 100%;
-  height: 20px;
   display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
 }
 
-.slider {
-  color: green;
-  appearance: none;
-  width: 25%;
-  height: auto;
-  outline: none;
-  opacity: 0.7;
-  margin: 0;
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
 }
 
-.slider-bounds {
-  appearance: none;
-	border: none;
-	outline: none;
-  box-sizing: border-box;
-  height: inherit;
-  width: 5vw;
-  opacity: 0.7;
-	border-bottom: .2em solid green;
-	padding: .4em;
-	color: green;
+.card {
+  padding: 2em;
 }
 
-.slider:hover {
-  opacity: 1;
+#app {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
 }
 
-.slider::-webkit-slider-thumb {
-  appearance: none;
-  width: 5px;
-  height: 20px;
-  background: #04AA6D;
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
   cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
 }
 
-/* Style The Dropdown Button */
-.dropbtn {
-  background-color: green;
-  color: black;
-  padding: 16px;
-  font-size: 16px;
-  width: 15vw;
-  border: none;
-  cursor: pointer;
-}
-
-/* The container <div> - needed to position the dropdown content */
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-/* Dropdown Content (Hidden by Default) */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  color: green;
-  min-width: 160px;
-  /* box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); */
-  z-index: 1;
-}
-
-/* Links inside the dropdown */
-.dropdown-content .state-button {
-  color: black;
-  background-color: green;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  border: none;
-  width: 15vw;
-}
-
-/* Change color of dropdown links on hover */
-.dropdown-content .state-button:hover {
-  opacity: 0.7;
-}
-
-/* Show the dropdown menu on hover */
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-/* Change the background color of the dropdown button when the dropdown content is shown */
-.dropdown:hover .dropbtn {
-  background-color: #3e8e41;
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
-
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.switch-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-.switch-slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-input:checked + .switch-slider {
-  background-color: green;
-}
-
-input:focus + .switch-slider {
-  box-shadow: 0 0 1px green;
-}
-
-input:checked + .switch-slider:before {
-  -webkit-transform: translateX(26px);
-  -ms-transform: translateX(26px);
-  transform: translateX(26px);
-}
-
-/* Rounded sliders */
-.switch-slider.round {
-  border-radius: 34px;
-}
-
-.switch-slider.round:before {
-  border-radius: 50%;
-}
-
-.slider-value {
-  appearance: none;
-	border: none;
-	outline: none;
-  box-sizing: border-box;
-  height: inherit;
-  width: 5vw;
-  opacity: 0.7;
-	border-bottom: .2em solid green;
-	color: green;
-}
-
-.send-button {
-  background-color: green;
-  color: black;
-  padding: 16px;
-  font-size: 16px;
-  width: 15vw;
-  border: none;
-  cursor: pointer;
-}
-
-.send-button:hover {
-  background-color: #3e8e41;
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
 }
