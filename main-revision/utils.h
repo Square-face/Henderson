@@ -36,7 +36,7 @@ enum EEPROMAdresses
   DkADRESS = 8,       // EEPROM Adress for Dk constant
   SpADRESS = 9,       // EEPROM Adress for speed constant
   CalMaxADRESS = 10,  // EEPROM Adress for calibration maximum
-  CalMinADRESS = 26   // EEPROM Adress for calibration minimum
+  CalMinADRESS = 36   // EEPROM Adress for calibration minimum
 };
 
 
