@@ -1,15 +1,64 @@
 use clap::{Arg, App};
 use std::process;
 
-
-enum StateCommand {
+/// The different states defined by the CPIDS protocol
+enum CPIDSStates {
+    /// No state change, continue with last state
     Nothing,
+
+    /// Change state to standby
     Standby,
+
+    /// Change state to running
     Running,
+
+    /// Change state to calibrating
     Calibrating,
+
+    /// Change state to manual calibration
+    CalibratingManual,
 }
 
 
+/// Structure of a CPIDS command
+///
+/// The CPIDS protocol uses 14 bytes for a single transmission. These bytes are split up in the following way
+/// - 1 Byte - Command
+///     Three bites of state code as defined in [CPIDSStates]
+///     
+///     The following 4 bits are a bitmask for the 4 parameters.
+///     i.e if the command is xxx0010x only the derivative will be looked at, all else are ignored
+///     This is used so that one can target a specific field to change without knowing anything
+///     about what the others should be
+///
+///     The last byte is a request flag. If it is set it means the reciving device should send all
+///     its config data 
+///
+/// - 4 Bytes - Proportional
+///     Floating point number between 0 and 1.
+///
+///     This float is used to set the proportional constant for the PID controler on the device, if the first
+///     bit in the bitmask from the command byte isn't set, this value should be ignored by the
+///     device
+///
+/// - 4 Bytes - Integral
+///     Floating point number between 0 and 1.
+///
+///     This float is used to set the integral constant for the PID controler on the device, if the second 
+///     bit in the bitmask from the command byte isn't set, this value should be ignored by the
+///     device
+///
+/// - 4 Bytes - Derivative
+///     Floating point number between 0 and 1.
+///
+///     This float is used to set the derivative constant for the PID controler on the device, if the third 
+///     bit in the bitmask from the command byte isn't set, this value should be ignored by the
+///     device
+///
+/// - 1 Byte - Speed
+///     Unsigned 8 bit integer. 0 to 255
+///
+///     This number is used to set the max traversal speed of the target device
 #[derive(Debug)]
 struct CommandStructure{
     command: u8,
@@ -40,18 +89,20 @@ struct CommandStructure{
 /// let state = get_state("nothing").unwrap();
 /// println!("{}", state as u8); //prints "0"
 /// ```
-fn get_state(state_string: &str) -> Result<StateCommand, &str> {
+fn get_state(state_string: &str) -> Result<CPIDSStates, &str> {
     
     match state_string {
-        "standby" => Ok(StateCommand::Standby),
+        "standby" => Ok(CPIDSStates::Standby),
 
-        "running" => Ok(StateCommand::Running),
+        "running" => Ok(CPIDSStates::Running),
 
-        "callibrating" => Ok(StateCommand::Calibrating),
+        "calibrating" => Ok(CPIDSStates::Calibrating),
+
+        "calibrating-manual" => Ok(CPIDSStates::CalibratingManual),
         
-        "nothing" => Ok(StateCommand::Nothing),
+        "nothing" => Ok(CPIDSStates::Nothing),
         
-        _ => Err("Input doesn't match any valid state('standby', 'running', 'callibrating', 'nothing')"),
+        _ => Err("Input doesn't match any valid state('standby', 'running', 'calibrating', 'calibrating-manual', 'nothing')"),
     }
 }
 
