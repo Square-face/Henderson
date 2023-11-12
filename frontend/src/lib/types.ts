@@ -26,6 +26,26 @@ export interface ConfigMask {
 
 export type ConfigField = 'State' | 'Pk' | 'Ik' | 'Dk' | 'Speed';
 
+
+
+export interface Log {
+  type: 'log'
+  cycles: number,
+  delta: number,
+  line: number,
+  p: number,
+  i: number,
+  d: number,
+  out: number,
+  left: number,
+  right: number,
+  sensors: number[],
+}
+
+
+
+// defaults
+
 export const defaultConfig: Config = {
   State: State.STANDBY,
   Pk: 0,

@@ -10,6 +10,9 @@ class Robot {
 
   constructor() {
     this.socket = new Socket();
+    this.socket.handlers.log = (data: any) => {
+
+    }
     this.config = writable(defaultConfig);
   }
   
