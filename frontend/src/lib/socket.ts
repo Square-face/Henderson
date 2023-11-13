@@ -57,7 +57,6 @@ export class Socket {
         else data.state = states.at(data.state-1)
 
         console.log(data);
-        data.Speed = data.speed
 
         this.handlers.status(data)
 
@@ -72,11 +71,11 @@ export class Socket {
 
   sendConfig(data: Config, mask: ConfigMask = MaskOn) {
     let msg = {
-      state: Object.values(State).indexOf(data.State) + 1,
+      state: Object.values(State).indexOf(data.state) + 1,
       Pk: data.Pk.toString(),
       Ik: data.Ik.toString(),
       Dk: data.Dk.toString(),
-      speed: data.Speed.toString(),
+      speed: data.speed.toString(),
     }
     this.websocket.send(JSON.stringify(msg))
   }

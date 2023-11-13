@@ -9,19 +9,19 @@ export enum State {
 
 // interface for the data type holding all values that can be sent to the server to modify Henderson
 export interface Config {
-  State: State,
+  state: State,
   Pk: number,
   Ik: number,
   Dk: number,
-  Speed: number
+  speed: number
 }
 
 export interface ConfigMask {
-  State: boolean,
+  state: boolean,
   Pk: boolean,
   Ik: boolean,
   Dk: boolean,
-  Speed: boolean,
+  speed: boolean,
 }
 
 export type ConfigField = 'State' | 'Pk' | 'Ik' | 'Dk' | 'Speed';
@@ -57,17 +57,17 @@ export interface Log {
 // defaults
 
 export const defaultConfig: Config = {
-  State: State.STANDBY,
+  state: State.STANDBY,
   Pk: 0,
   Ik: 0,
   Dk: 0,
-  Speed: 0,
+  speed: 0,
 }
 
 export const MaskOn: ConfigMask = {
-  State: true,
+  state: true,
   Pk: true,
   Ik: true,
   Dk: true,
-  Speed: true,
+  speed: true,
 }
