@@ -76,7 +76,7 @@ class Robot {
   write() {
     this.socket.sendConfig(this.getConfig());
   }
-
+  
 
   /**
    * Request the robot to send its current config values.
