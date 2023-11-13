@@ -71,3 +71,11 @@ export const MaskOn: ConfigMask = {
   Dk: true,
   speed: true,
 }
+
+export const MaskOff: ConfigMask = {
+  state: false,
+  Pk: false,
+  Ik: false,
+  Dk: false,
+  speed: false,
+}

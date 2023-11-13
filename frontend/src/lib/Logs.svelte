@@ -18,6 +18,5 @@
     display: grid;
     grid-auto-flow: column;
     gap: 1rem;
-    align-content: center;
   }
 </style>

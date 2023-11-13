@@ -29,6 +29,36 @@ void initializeBLE()
 }
 
 
+template <typename T>
+void ble_write(T data)
+{
+  byte* pData = reinterpret_cast<byte*>(&data);
+
+  for (char i = 0; i < sizeof(data); i++) {
+      ble.write(pData[i]);
+  }
+}
+
+
+template <typename T>
+void srl_write(T data)
+{
+  byte* pData = reinterpret_cast<byte*>(&data);
+
+  for (char i = 0; i < sizeof(data); i++) {
+    String hexString = String(pData[i], 16);
+    for (char j = 0; j < (2 - hexString.length()); j++)
+    {
+      Serial.print("0");
+    }
+    Serial.print(hexString);
+    Serial.print(" ");
+  }
+
+  Serial.print("- ");
+  Serial.println(sizeof(data));
+}
+
 // If there is data available to read for the BLE, its will return the available data.
 commandStructure readAvailable()
 {
@@ -111,13 +141,18 @@ void sendCurrentStatus()
   Serial.print(" Dk: " + String(temp.Dk, 8));
   Serial.println(" speed: " + String(temp.speed));
 
-  ble.write(state);
-  Serial.print(state, 16);
-  for (int i = 0; i < sizeof(temp) - sizeof(u16) * 2; i++) 
-  {
-    ble.write(*((uint8_t *)((&temp)+i)));
-    Serial.print(*((uint8_t *)((&temp)+i)), 16);
-  }
+  ble_write(state);
+  ble_write(temp.Pk);
+  ble_write(temp.Ik);
+  ble_write(temp.Dk);
+  ble_write(temp.speed);
+
+  srl_write(state);
+  srl_write(temp.Pk);
+  srl_write(temp.Ik);
+  srl_write(temp.Dk);
+  srl_write(temp.speed);
+
   Serial.println();
 }
 
@@ -185,35 +220,7 @@ void handleIncoming()
 }
 
 
-template <typename T>
-void ble_write(T data)
-{
-  byte* pData = reinterpret_cast<byte*>(&data);
 
-  for (char i = 0; i < sizeof(data); i++) {
-      ble.write(pData[i]);
-  }
-}
-
-
-template <typename T>
-void srl_write(T data)
-{
-  byte* pData = reinterpret_cast<byte*>(&data);
-
-  for (char i = 0; i < sizeof(data); i++) {
-    String hexString = String(pData[i], 16);
-    for (char j = 0; j < (2 - hexString.length()); j++)
-    {
-      Serial.print("0");
-    }
-    Serial.print(hexString);
-    Serial.print(" ");
-  }
-
-  Serial.print("- ");
-  Serial.println(sizeof(data));
-}
 
 
 #endif
