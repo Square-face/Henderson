@@ -1,3 +1,4 @@
+import re
 import struct, json
 
 def decode_log(buffer: bytearray):
@@ -15,3 +16,17 @@ def decode_log(buffer: bytearray):
     result = { "type": "log", "cycles_per_log": cycle, "delta_per_log": delta, "line_pos": inp, "p": f"{P:.9f}", "i": f"{I:.9f}", "d": f"{D:.9f}", "output": O, "left": L, "right": R, "sensors": sensors}
 
     return json.dumps(result)
+
+def decode_status(buffer: bytearray):
+
+    # unpack
+    (state, P, I, D, speed) = struct.unpack("<B f f f B", buffer)
+
+    result = {
+            "type": "status", "state": state, "Pk": P, "Ik": I, "Dk": D, "speed": speed
+            }
+
+    print(json.dumps(result))
+
+    return json.dumps(result)
+

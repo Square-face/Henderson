@@ -32,22 +32,22 @@ class Command:
 
         if self.proportional is not None:
             cmd.append("-p")
-            cmd.append(self.proportional)
+            cmd.append(str(self.proportional))
 
 
         if self.integral is not None:
             cmd.append("-i")
-            cmd.append(self.integral)
+            cmd.append(str(self.integral))
 
 
         if self.derivative is not None:
             cmd.append("-d")
-            cmd.append(self.derivative)
+            cmd.append(str(self.derivative))
 
 
         if self.speed is not None:
             cmd.append("-s")
-            cmd.append(self.speed)
+            cmd.append(str(self.speed))
 
 
         if self.request_status:
@@ -65,13 +65,13 @@ class Command:
             cmd["state"] = self.target_state.value
 
         if self.proportional is not None:
-            cmd["proportional"] = self.proportional
+            cmd["Pk"] = self.proportional
 
         if self.integral is not None:
-            cmd["integral"] = self.integral
+            cmd["Ik"] = self.integral
 
         if self.derivative is not None:
-            cmd["derivative"] = self.derivative
+            cmd["Dk"] = self.derivative
 
         if self.speed is not None:
             cmd["speed"] = self.speed
