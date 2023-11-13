@@ -20,7 +20,7 @@ class Robot {
     }
 
     this.socket.handlers.status = (data: StatusUpdate) => {
-      this.config.update((prev:Config) => {
+      this.config.update((prev: Config) => {
         return {
           ...prev,
           ...data

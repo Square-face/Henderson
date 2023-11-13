@@ -24,15 +24,15 @@ export interface ConfigMask {
   speed: boolean,
 }
 
-export type ConfigField = 'State' | 'Pk' | 'Ik' | 'Dk' | 'Speed';
+export type ConfigField = 'state' | 'Pk' | 'Ik' | 'Dk' | 'speed';
 
 
 export interface StatusUpdate {
   type: 'status'
-  state: State | null,
-  p?: number,
-  i?: number,
-  d?: number,
+  state: State,
+  Pk?: number,
+  Ik?: number,
+  Dk?: number,
   speed?: number,
 }
 

@@ -26,7 +26,7 @@
     Henderson.config.update((previous: Config) => {
       return {
         ...previous,
-        State: state
+        state: state
       }
     });
   }
@@ -34,16 +34,6 @@
   const updateConfig = (field: ConfigField) => {
     switch(field)
     {
-      case 'State':
-        return (state: State) => {
-          Henderson.config.update((previous: Config) => {
-            return {
-              ...previous,
-              State: state
-            }
-          });
-        }
-
       case 'Pk':
         return (pk: number) => {
           Henderson.config.update((previous: Config) => {
@@ -74,12 +64,12 @@
           });
         }
 
-      case 'Speed':
+      case 'speed':
         return (speed: number) => {
           Henderson.config.update((previous: Config) => {
             return {
               ...previous,
-              Speed: speed
+              speed: speed
             }
           });
         }
@@ -88,7 +78,6 @@
 
   const sendButton = () => {
     Henderson.write();
-    Henderson.what_the_hell_are_you_doing('?');
   }
 
   const requestButton = () => {
@@ -119,7 +108,7 @@
       </div>
       <div class="speed">
         <h1>Speed</h1>
-        <Slider bind:checked={SpeedToggle} bind:value={config.Speed} text="Speed" max={255} update={updateConfig('Speed')}/>
+        <Slider bind:checked={SpeedToggle} bind:value={config.speed} text="Speed" max={255} update={updateConfig('speed')}/>
       </div>
     </div>
     <div class="log-section">
@@ -136,17 +125,6 @@
 </main>
 
 <style>
-  #send-button, #henderson-wyd {
-    padding: 16px;
-    background-color: cyan;
-    color: #242424;
-    border: none; 
-  }
-
-  #send-button:hover, #henderson-wyd:hover{
-    background-color: rgb(0, 228, 228);
-  }
-
   .misc {
     display: grid;
     grid-template: 1fr 1fr / 15rem 15rem;
