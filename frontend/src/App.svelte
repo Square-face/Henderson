@@ -2,10 +2,10 @@
   // import svelteLogo from './assets/svelte.svg'
   // import viteLogo from '/vite.svg'
   // import Counter from './lib/Counter.svelte'
-  import Slider from './lib/Slider.svelte';
-  import StateDropdown from './lib/State-dropdown.svelte';
-  import Button from './lib/Button.svelte';
-  import Logs from './lib/Logs.svelte';
+  import Slider from './lib/components/Slider.svelte';
+  import StateDropdown from './lib/components/State-dropdown.svelte';
+  import Button from './lib/components/Button.svelte';
+  import Logs from './lib/components/Logs.svelte';
   import { Henderson } from './lib/robot';
   import type { Config, ConfigField, Log, State } from './lib/types';
   // import { createEventDispatcher } from 'svelte';

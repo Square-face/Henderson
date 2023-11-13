@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { State } from "./types";
+  import { State } from "../types";
 
   const stateArray = Object.values(State);
 
