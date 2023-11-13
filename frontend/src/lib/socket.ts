@@ -106,6 +106,8 @@ export class Socket {
   sendConfig(data: Config, mask: ConfigMask = MaskOn) {
     let msg = {};
     
+    
+    // apply mask
     if (mask.state) msg["state"] = data.state
 
     if (mask.Pk) msg["state"] = data.Pk
