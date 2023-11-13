@@ -72,10 +72,10 @@ export class Socket {
   sendConfig(data: Config, mask: ConfigMask = MaskOn) {
     let msg = {
       state: Object.values(State).indexOf(data.state) + 1,
-      Pk: data.Pk.toString(),
-      Ik: data.Ik.toString(),
-      Dk: data.Dk.toString(),
-      speed: data.speed.toString(),
+      Pk: data.Pk,
+      Ik: data.Ik,
+      Dk: data.Dk,
+      speed: data.speed,
     }
     this.websocket.send(JSON.stringify(msg))
   }
