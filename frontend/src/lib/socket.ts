@@ -24,62 +24,103 @@ export class Socket {
 
   }
 
+  /**
+   * Event handler for socket errors.
+   * Should not be triggered manualy and should instead be registered as an event listener for [websocket]
+   *
+   * ```
+   * this.websocket.addEventListener("error", (ev: Event) => {this.onError(ev)});
+   * ```
+   * */
   onError(ev: Event) {
     console.error("Websocket error", ev)
   }
 
+
+  /** 
+   * Event handler for when the socket connection is opened
+   * Will imediatly request an updated version of the local config to make sure the local data is up-to-date
+   * Should not be triggered manualy and should instead be registered as an event listener for [websocket]
+   * */
   onOpen(ev: Event) {
     this.requestConfig()
     console.log("Websocket connected", ev)
   }
 
+  /**
+   * Event handler for when the socket recives a message
+   * Runs the coresponding handler for a message depending on what the messages type field is set to.
+   * i.e if the message has its type as "log" the handler.log will be used
+   *
+   * Should not be triggered manualy and should instead be registered as an event listener for [websocket]
+   * */
   onMessage(ev: MessageEvent) {
-    console.log("Recived message");
+
+    // parse
     let msg = ev.data;
     let data = JSON.parse(msg);
 
-    if (this.handlers === undefined) { return; }
-
     switch (data.type) {
       case "log":
+        // use log handler
         if (this.handlers.log === undefined) { return; }
 
         this.handlers.log(data)
-        
         break;
 
       case "status":
+        // use status update handler
         if (this.handlers.status === undefined) { return; }
-        
+
+
+        // Replace state ordinal with enum value
         let states = Object.values(State)
 
         if (data.state == 0) data.state = null
-        else data.state = states.at(data.state-1)
-
-        console.log(data);
+        else data.state = states.at(data.state)
 
         this.handlers.status(data)
+        break;
 
       default:
         break;
     }
   }
 
+  /**
+   * Event handler for websocket close events
+   * 
+   * Should not be triggered manualy and should instead be registered as an event listener for [websocket]
+   * */
   onClose(ev: Event) {
     console.log("Websocket disconnected", ev);
   }
 
+  /**
+   * Send a config object to the host device.
+   * A mask can be used to only send necesary.
+   *
+   * @param data The config holding the to change data
+   * @param mask A mask of booleans indicating wich data fields to care about
+   * */
   sendConfig(data: Config, mask: ConfigMask = MaskOn) {
-    let msg = {
-      state: Object.values(State).indexOf(data.state) + 1,
-      Pk: data.Pk,
-      Ik: data.Ik,
-      Dk: data.Dk,
-      speed: data.speed,
-    }
+    let msg = {};
+    
+    if (mask.state) msg["state"] = data.state
+
+    if (mask.Pk) msg["state"] = data.Pk
+    if (mask.Ik) msg["state"] = data.Ik
+    if (mask.Dk) msg["state"] = data.Dk
+
+    if (mask.speed) msg["state"] = data.speed
+
     this.websocket.send(JSON.stringify(msg))
   }
 
+  /**
+   * Send a request to the server to make it pool the robot its stored config and return it.
+   * This function does not return the new config, it is instead handled by the message reciver wich dispatches an event to the status handler when it resives a status update.
+   * */
   requestConfig() {
     let data = {
       request_status: true
