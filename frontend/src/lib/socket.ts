@@ -1,6 +1,6 @@
 import { type Config, type ConfigMask , MaskOn, type Log, type StatusUpdate, State } from "./types";
 
-const ws_url = "ws://192.168.1.192:8000/ws"
+const ws_url = "ws://192.168.8.241:8000/ws"
 
 interface Handlers {
   log?: ((data: Log) => any) 
@@ -54,7 +54,7 @@ export class Socket {
         let states = Object.values(State)
 
         if (data.state == 0) data.state = null
-        else data.state = states.at(data.state-1)
+        else data.state = states.at(data.state)
 
         console.log(data);
 

@@ -7,8 +7,8 @@
 </script>
 
 <div class="slider-container">
-  <input type="number" max={max} step={(max < 1) ? max / 10000 : 1} class="slider-text" bind:value/>
-  <input type="range" max={max} step={(max < 1) ? max / 10000 : 1} class="slider" bind:value on:change={()=>{update(value)}}>
+  <input type="number" max={max} step={(max < 10) ? 1 / 10000 : 1} class="slider-text" bind:value/>
+  <input type="range" max={max} step={(max < 10) ? 1 / 10000 : 1} class="slider" bind:value on:change={()=>{update(value)}}>
   <input type="number" class="slider-text" bind:value={max}/>
   <label class="checkbox-container">{text}
     <input type="checkbox" bind:checked>

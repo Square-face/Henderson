@@ -1,14 +1,14 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+  // import svelteLogo from './assets/svelte.svg'
+  // import viteLogo from '/vite.svg'
+  // import Counter from './lib/Counter.svelte'
   import Slider from './lib/Slider.svelte';
   import StateDropdown from './lib/State-dropdown.svelte';
   import Button from './lib/Button.svelte';
-  import LogNumber from './lib/LogNumber.svelte';
+  import Logs from './lib/Logs.svelte';
   import { Henderson } from './lib/robot';
   import type { Config, ConfigField, Log, State } from './lib/types';
-  import { createEventDispatcher } from 'svelte';
+  // import { createEventDispatcher } from 'svelte';
   
   let config: Config;
   let logs: Log[];
@@ -18,9 +18,9 @@
     config = value;
   });
 
-  // Henderson.log_buffer.subscribe(value => {
-  //   logs = value;
-  // })
+  Henderson.log_buffer.subscribe(value => {
+    logs = value;
+  })
   
   const updateState = (state: State) => {
     Henderson.config.update((previous: Config) => {
@@ -113,13 +113,10 @@
     </div>
     <div class="log-section">
       <h1>Logs</h1>
-      <div class="raw-log-numbers">
-        <!-- {#each Object.entries(logs[0]) as logValue}
-          <LogNumber />
-        {:else}
-          <LogNumber />
-        {/each} -->
-      </div>
+      <h2>Latest</h2>
+      <Logs log={logs[0]}/>
+      <h2>Graphs</h2>
+      
     </div>
   </div>
 </main>
@@ -131,5 +128,4 @@
     gap: 8px;
     align-items: center;
   }
-
 </style>
