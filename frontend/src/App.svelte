@@ -95,7 +95,7 @@
     <div class="send-section">
       <h1>Misc</h1>
       <div class="misc">
-        <StateDropdown event={updateState}/>
+        <StateDropdown bind:state={config.state} event={updateState}/>
         <Button event={sendButton}>Send</Button>
         <Button event={requestButton}>Request</Button>
         <Button>Stop</Button>

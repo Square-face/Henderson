@@ -3,19 +3,18 @@
 
   const stateArray = Object.values(State);
 
-  let currentState = State.STANDBY;
-
+  export let state:State;
   export let event = (state: State) => {};
 </script>
 
 <div class="dropdown">
-  <button class="dropbtn">{currentState}</button>
+  <button class="dropbtn">{state}</button>
   <div class="dropdown-content">
-    {#each stateArray as state}
+    {#each stateArray as buttonState}
       <button type="button" class="state-button" on:click={() => {
-        currentState = state;
+        state = buttonState;
         event(state);
-      }}>{state}</button>
+      }}>{buttonState}</button>
     {/each}
   </div>
 </div>

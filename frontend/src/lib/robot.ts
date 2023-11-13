@@ -45,6 +45,8 @@ class Robot {
     };
 
     this.socket.handlers.status = (data: StatusUpdate) => {
+      console.log(data);
+      
       // update the config
       this.config.update((prev: Config) => {
         return {
