@@ -6,6 +6,7 @@
   import StateDropdown from './lib/components/State-dropdown.svelte';
   import Button from './lib/components/Button.svelte';
   import Logs from './lib/components/Logs.svelte';
+  import Socket from './lib/components/Socket.svelte';
   import { Henderson } from './lib/robot';
   import type { Config, ConfigField, ConfigMask, Log, State } from './lib/types';
   // import { createEventDispatcher } from 'svelte';
@@ -121,6 +122,9 @@
   <div class="appContainer">
     <div class="send-section">
       <h1>Misc</h1>
+      <div class="site-stats">
+        <Socket socket={Henderson.socket}/>
+      </div>
       <div class="misc">
         <StateDropdown bind:state={config.state} event={updateState}/>
         <Button event={sendButton}>Send</Button>

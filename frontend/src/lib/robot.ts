@@ -7,7 +7,7 @@ import { defaultConfig, MaskOff, type Config, type ConfigMask, type Log, type St
  * Provide a store and some quickhands for managing a remote robot.
  * This class implements most of the feaures required to communicate with the server
 */
-class Robot {
+export class Robot {
   
   // current config
   config: Writable<Config>;
@@ -20,7 +20,7 @@ class Robot {
 
 
   // Socket object for communicating with the server
-  private socket: Socket;
+  socket: Socket;
 
 
   constructor(max_logs:number = 100) {

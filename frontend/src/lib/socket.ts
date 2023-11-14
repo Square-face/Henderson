@@ -11,7 +11,7 @@ interface Handlers {
 export class Socket {
   handlers: Handlers;
   auto_reconnect: boolean = true;
-  private websocket: WebSocket;
+  websocket: WebSocket;
 
   constructor() {
     console.log(`Connecting to server at ${ws_url}`);
