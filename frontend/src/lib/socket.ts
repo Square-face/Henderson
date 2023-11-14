@@ -14,13 +14,19 @@ export class Socket {
 
   constructor() {
     console.log(`Connecting to server at ${ws_url}`);
-    this.websocket = new WebSocket(ws_url);
+    this.connect(ws_url);
     this.handlers = {};
+  }
+
+
+  connect(url: string) {
+    this.websocket = new WebSocket(url);
 
     this.websocket.addEventListener("error", (ev: Event) => {this.onError(ev)});
     this.websocket.addEventListener("open", (ev: Event) => {this.onOpen(ev)});
     this.websocket.addEventListener("message", (ev: MessageEvent) => {this.onMessage(ev)});
     this.websocket.addEventListener("close", (ev: Event) => {this.onClose(ev)});
+
   }
 
   /**
@@ -93,7 +99,9 @@ export class Socket {
    * Should not be triggered manualy and should instead be registered as an event listener for [websocket]
    * */
   onClose(ev: Event) {
-    console.log("Websocket disconnected", ev);
+    console.log("Websocket disconnected, attempting reconnect", ev);
+
+    this.connect(ws_url);
   }
 
   /**
