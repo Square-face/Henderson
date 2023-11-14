@@ -22,7 +22,7 @@ void initializeSensorPins()
 
 unsigned short readArray()
 {
-  sensors.read(sensor_readings);
+  sensors.readCalibrated(sensor_readings);
   memcpy(sensor_readings_copy, sensor_readings, sizeof(sensor_readings));
   return sensors.readLineBlack(sensor_readings);
 }
@@ -41,6 +41,7 @@ void endCalibration()
     EEPROM.put(CalMaxADRESS + i * sizeof(uint16_t), sensors.calibrationOn.maximum[i]);
     EEPROM.put(CalMinADRESS + i * sizeof(uint16_t), sensors.calibrationOn.minimum[i]);
   }
+
   
   sensors.emittersOff();
 
@@ -53,6 +54,23 @@ void endCalibration()
   for (int i = 0; i < sensor_count; i++)
     Serial.print(String(sensors.calibrationOn.minimum[i]) + " ");
   Serial.println();
+
+  // uint16_t tempCalMax[sensor_count];
+  // uint16_t tempCalMin[sensor_count];
+
+  // EEPROM.get(CalMaxADRESS, tempCalMax); 
+  // EEPROM.get(CalMinADRESS, tempCalMin); 
+
+  // Serial.print("Calibration maximum: ");
+  // for (int i = 0; i < sensor_count; i++)
+  //   Serial.print(String(tempCalMax[i]) + " ");
+  // Serial.println();
+
+  // Serial.print("Calibration minimum: ");
+  // for (int i = 0; i < sensor_count; i++)
+  //   Serial.print(String(tempCalMin[i]) + " ");
+  // Serial.println();
+
 }
 
 

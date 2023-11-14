@@ -5,7 +5,7 @@
 
 
 // Desired line position. calculated to be half the maximum value that can be read by the sensor array
-#define SETPOINT sensor_count * 500;
+#define SETPOINT (sensor_count - 1) * 500;
 
 
 // Enable or dissable verbose logging to BLE serial
@@ -15,7 +15,7 @@
 
 // Limit how over verbose logs are sent over BLE
 // Higher value will result in lower performance loss but more inacurate data
-#define CYCLES_PER_LOG 10
+#define CYCLES_PER_LOG 25
 
 
 // variables for verbose logging
@@ -280,7 +280,7 @@ void running()
   // PID
   P = settings.Pk * error;
   I += settings.Ik * error;
-  D = settings.Dk * (error - previous_error);
+  D = settings.Dk * (previous_error - error);
 
   // combine and constrain
   result = P + I + D;
