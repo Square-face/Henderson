@@ -1,6 +1,6 @@
 import { writable, type Writable } from 'svelte/store';
 import { Socket } from './socket';
-import { defaultConfig, MaskOff, type Config, type ConfigMask, type Log, type StatusUpdate } from './types';
+import { defaultConfig, MaskOff, type Config, type ConfigMask, type Log, type StatusUpdate, State } from './types';
 
 
 /** 
@@ -31,7 +31,6 @@ class Robot {
     this.log_buffer = writable([]);
 
     this.max_logs = max_logs;
-
 
     // initialize handlers
     this.socket.handlers.log = (data: Log) => {
@@ -66,19 +65,44 @@ class Robot {
     let current: Config = defaultConfig;
 
     this.config.subscribe((value: Config) => {
-      current = value
+      current = value;
     });
 
     return current
   }
 
   /**
+   * Get the config mask as a value.
+   * */
+  getMask(): ConfigMask {
+    let current: ConfigMask = MaskOff;
+
+    this.mask.subscribe((value: ConfigMask) => {
+      current = value;
+    });
+
+    return current;
+  }
+
+  /**
    * Upload the local config to the robot
    * */
   write() {
-    this.socket.sendConfig(this.getConfig());
+    this.socket.sendConfig(this.getConfig(), this.getMask());
   }
-  
+
+  /**
+   * Sends a single STANDBY command. 
+   **/
+  halt() {
+    this.socket.sendConfig({
+      ...defaultConfig,
+      state: State.STANDBY
+    }, {
+      ...MaskOff,
+      state: true
+    })
+  }
 
   /**
    * Request the robot to send its current config values.

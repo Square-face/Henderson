@@ -7,12 +7,12 @@
   import Button from './lib/components/Button.svelte';
   import Logs from './lib/components/Logs.svelte';
   import { Henderson } from './lib/robot';
-  import type { Config, ConfigField, Log, State } from './lib/types';
+  import type { Config, ConfigField, ConfigMask, Log, State } from './lib/types';
   // import { createEventDispatcher } from 'svelte';
   
   let config: Config;
   let logs: Log[];
-  let PkToggle: boolean, IkToggle: boolean, DkToggle: boolean, SpeedToggle: boolean;
+  let PkToggle: boolean, IkToggle: boolean, DkToggle: boolean, speedToggle: boolean;
 
   Henderson.config.subscribe(value => {
     config = value;
@@ -42,6 +42,12 @@
               Pk: pk
             }
           });
+          Henderson.mask.update((previous: ConfigMask) => {
+            return {
+              ...previous,
+              Pk: PkToggle
+            }
+          })
         }
 
       case 'Ik':
@@ -52,6 +58,12 @@
               Ik: ik
             }
           });
+          Henderson.mask.update((previous: ConfigMask) => {
+            return {
+              ...previous,
+              Ik: IkToggle
+            }
+          })
         }
 
       case 'Dk':
@@ -62,6 +74,12 @@
               Dk: dk
             }
           });
+          Henderson.mask.update((previous: ConfigMask) => {
+            return {
+              ...previous,
+              Dk: DkToggle
+            }
+          })
         }
 
       case 'speed':
@@ -72,6 +90,12 @@
               speed: speed
             }
           });
+          Henderson.mask.update((previous: ConfigMask) => {
+            return {
+              ...previous,
+              Pk: speedToggle
+            }
+          })
         }
     }
   }
@@ -84,6 +108,9 @@
     Henderson.what_the_hell_are_you_doing('?');
   }
 
+  const stopButton = () => {
+    Henderson.halt();
+  }
 
   // const stopButton = () => {
   //   Henderson.config.update
@@ -98,7 +125,7 @@
         <StateDropdown bind:state={config.state} event={updateState}/>
         <Button event={sendButton}>Send</Button>
         <Button event={requestButton}>Request</Button>
-        <Button>Stop</Button>
+        <Button event={stopButton}>Stop</Button>
       </div>
       <div class="PID">
         <h1>PID</h1>
@@ -108,7 +135,7 @@
       </div>
       <div class="speed">
         <h1>Speed</h1>
-        <Slider bind:checked={SpeedToggle} bind:value={config.speed} text="Speed" max={255} update={updateConfig('speed')}/>
+        <Slider bind:checked={speedToggle} bind:value={config.speed} text="Speed" max={255} update={updateConfig('speed')}/>
       </div>
     </div>
     <div class="log-section">
