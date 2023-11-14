@@ -76,7 +76,7 @@ void endCalibration()
 
 uint16_t readLinePosition()
 {
-  sensors.read(sensor_readings);
+  sensors.readCalibrated(sensor_readings);
   return sensors.readLineBlack(sensor_readings);
 }
 
