@@ -19,7 +19,12 @@ class ConnectionManager:
         for connection in self.active_connections:
             try:
                 await connection.send_text(message)
-            except Exception as e:
+
+            except:
                 self.active_connections.remove(connection)
-                print(e)
+                try:
+                    connection.close()
+                    print("closing connection")
+                except:
+                    pass
 
