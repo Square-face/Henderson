@@ -11,7 +11,7 @@
   <input type="range" max={max} step={(max < 10) ? 1 / 10000 : 1} class="slider" bind:value on:change={()=>{update(value)}}>
   <input type="number" class="slider-text" bind:value={max}/>
   <label class="checkbox-container">{text}
-    <input type="checkbox" bind:checked>
+    <input type="checkbox" bind:checked on:change={()=>{update(value)}}>
     <span class="checkmark"></span>
   </label>
 </div>
