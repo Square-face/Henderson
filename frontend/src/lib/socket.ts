@@ -9,8 +9,8 @@ interface Handlers {
 
 // class for managing communication with the server
 export class Socket {
-  websocket: WebSocket;
   handlers: Handlers;
+  private websocket: WebSocket;
 
   constructor() {
     console.log(`Connecting to server at ${ws_url}`);
@@ -18,7 +18,19 @@ export class Socket {
     this.handlers = {};
   }
 
-
+  
+  /**
+   * Connects websocket
+   *
+   * Attempts to setup a websocket connection to the given url. Also registers all event handlers
+   *
+   * # Arguments
+   * * `url` - URL to attempt to connect to
+   *
+   * ```
+   * this.connect("ws://example.com/ws");
+   * ```
+   * */
   connect(url: string) {
     this.websocket = new WebSocket(url);
 
