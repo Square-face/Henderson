@@ -10,6 +10,7 @@ interface Handlers {
 // class for managing communication with the server
 export class Socket {
   handlers: Handlers;
+  auto_reconnect: boolean = true;
   private websocket: WebSocket;
 
   constructor() {
@@ -40,6 +41,18 @@ export class Socket {
     this.websocket.addEventListener("close", (ev: Event) => {this.onClose(ev)});
 
   }
+
+
+
+  /**
+   * Terminates the websocket connection and disables auto recconect
+   * */
+  disconnect() {
+    this.auto_reconnect = false;
+    this.websocket.close();
+  }
+
+
 
   /**
    * Event handler for socket errors.
@@ -111,6 +124,10 @@ export class Socket {
    * Should not be triggered manualy and should instead be registered as an event listener for [websocket]
    * */
   onClose(ev: Event) {
+    if (!this.auto_reconnect) {
+      console.log("Websocket disconnected");
+      return;
+    }
     console.log("Websocket disconnected, attempting reconnect", ev);
 
     this.connect(ws_url);

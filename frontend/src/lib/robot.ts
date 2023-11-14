@@ -55,6 +55,15 @@ class Robot {
       });
     };
   }
+
+
+  /**
+   * Disconnect the websocket from the server and stop attempting reconnects
+   * */
+  disconnect() {
+    this.socket.disconnect();
+  }
+
   
   /**
    * Get the raw config as a value.
@@ -71,6 +80,8 @@ class Robot {
     return current
   }
 
+
+
   /**
    * Get the config mask as a value.
    * */
@@ -84,12 +95,17 @@ class Robot {
     return current;
   }
 
+
+
   /**
    * Upload the local config to the robot
    * */
   write() {
+    console.log("Sending config", this.getConfig(), this.getMask())
     this.socket.sendConfig(this.getConfig(), this.getMask());
   }
+
+
 
   /**
    * Sends a single STANDBY command. 
@@ -103,6 +119,8 @@ class Robot {
       state: true
     })
   }
+
+
 
   /**
    * Request the robot to send its current config values.
