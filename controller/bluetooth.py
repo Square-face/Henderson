@@ -25,8 +25,7 @@ class Bluetooth:
             print("Failed to send")
 
     async def register(self, callback):
-        pass
-        # await self.client.start_notify(COM_UUID, callback)
+        await self.client.start_notify(COM_UUID, callback)
 
     async def disconnect(self):
         print("Disconnecting ble device")
