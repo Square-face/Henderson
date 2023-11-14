@@ -98,7 +98,7 @@ fn get_state(state_string: &str) -> Result<CPIDSStates, &str> {
 
         "calibrating" => Ok(CPIDSStates::Calibrating),
 
-        "calibrating-manual" => Ok(CPIDSStates::CalibratingManual),
+        "calibrating_manual" => Ok(CPIDSStates::CalibratingManual),
         
         "nothing" => Ok(CPIDSStates::Nothing),
         
