@@ -1,6 +1,6 @@
 import { writable, type Writable } from 'svelte/store';
 import { Socket } from './socket';
-import { defaultConfig, MaskOff, type Config, type ConfigMask, type Log, type StatusUpdate, State } from './types';
+import { defaultConfig, MaskOff, type Config, type ConfigMask, type Log, type StatusUpdate, State, MaskOn } from './types';
 
 
 /** 
@@ -27,7 +27,7 @@ class Robot {
     this.socket = new Socket();
 
     this.config = writable(defaultConfig);
-    this.mask = writable(MaskOff);
+    this.mask = writable(MaskOn);
     this.log_buffer = writable([]);
 
     this.max_logs = max_logs;
