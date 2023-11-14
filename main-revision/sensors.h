@@ -7,6 +7,7 @@
 
 
 uint16_t sensor_readings[sensor_count];
+uint16_t sensor_readings_copy[sensor_count];
 QTRSensors sensors;
 
 
@@ -22,6 +23,7 @@ void initializeSensorPins()
 unsigned short readArray()
 {
   sensors.read(sensor_readings);
+  memcpy(sensor_readings_copy, sensor_readings, sizeof(sensor_readings));
   return sensors.readLineBlack(sensor_readings);
 }
 
