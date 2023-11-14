@@ -42,7 +42,7 @@ class Robot {
         return buffer.slice(0, 100); // only save the most recent logs
 
       });
-    };
+  };
 
     this.socket.handlers.status = (data: StatusUpdate) => {
       console.log(data);

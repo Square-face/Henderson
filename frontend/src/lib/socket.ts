@@ -21,7 +21,6 @@ export class Socket {
     this.websocket.addEventListener("open", (ev: Event) => {this.onOpen(ev)});
     this.websocket.addEventListener("message", (ev: MessageEvent) => {this.onMessage(ev)});
     this.websocket.addEventListener("close", (ev: Event) => {this.onClose(ev)});
-
   }
 
   /**
@@ -106,16 +105,19 @@ export class Socket {
    * */
   sendConfig(data: Config, mask: ConfigMask = MaskOn) {
     let msg = {};
+    console.log(data)
     
+    let states = Object.values(State)
     
     // apply mask
-    if (mask.state) msg["state"] = data.state
+    if (mask.state) msg["state"] = states.indexOf(data.state) + 1
 
-    if (mask.Pk) msg["state"] = data.Pk
-    if (mask.Ik) msg["state"] = data.Ik
-    if (mask.Dk) msg["state"] = data.Dk
+    if (mask.Pk) msg["Pk"] = data.Pk
+    if (mask.Ik) msg["Ik"] = data.Ik
+    if (mask.Dk) msg["Dk"] = data.Dk
 
-    if (mask.speed) msg["state"] = data.speed
+    if (mask.speed) msg["speed"] = data.speed
+    console.log(msg)
 
     this.websocket.send(JSON.stringify(msg))
   }
