@@ -75,7 +75,7 @@ class Robot {
 
     this.config.subscribe((value: Config) => {
       current = value;
-    });
+    })();
 
     return current
   }

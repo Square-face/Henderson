@@ -23,7 +23,7 @@ class Command:
         self.request_status = False
 
     def get_cpids(self):
-        cmd = ["../command-generator/target/release/command-generator"]
+        cmd = ["../CPIDS/target/release/CPIDS"]
 
 
         cmd.append("--state")
