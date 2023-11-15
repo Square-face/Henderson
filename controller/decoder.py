@@ -10,8 +10,8 @@ def decode_log(buffer: bytearray):
     # unpack
     (cycle, delta, inp) = struct.unpack("<H H H", buffer[1:7])
     (P, I, D) = struct.unpack("<f f f", buffer[7:19])
-    (O, L, R) = struct.unpack("<b B B", buffer[19:22])
-    sensors = struct.unpack("<HHHHHHHH", buffer[22:39])
+    (O, L, R) = struct.unpack("<h B B", buffer[19:23])
+    sensors = struct.unpack("<HHHHHHHH", buffer[23:40])
 
     result = { "type": "log", "cycles_per_log": cycle, "delta_per_log": delta, "line_pos": inp, "p": f"{P:.9f}", "i": f"{I:.9f}", "d": f"{D:.9f}", "output": O, "left": L, "right": R, "sensors": sensors}
 

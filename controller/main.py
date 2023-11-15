@@ -31,12 +31,12 @@ async def callback(_: BleakGATTCharacteristic, data: bytearray):
         buffer.clear()
         return
 
-    if start_length != 0 and len(buffer) == 38:
+    if start_length != 0 and len(buffer) == 39:
         await manager.broadcast(decode_log(buffer))
         buffer.clear()
         return
 
-    if start_length != 0 and len(buffer) != 38:
+    if start_length != 0 and len(buffer) != 39:
         buffer.clear()
         return
 
