@@ -159,7 +159,7 @@ void sendCurrentStatus()
 
 void handleIncoming()
 {
-  // Fetch the available data *UNCOMMEND THIS*
+  // Fetch the available BLE data
   if (ble.available() > 0)
   {
     Serial.println("Something was recieved");
@@ -167,7 +167,7 @@ void handleIncoming()
     bleReadData = readAvailable();
   }
 
-  // Fetch serial data instead *COMMENT THIS OUT*
+  // Fetch the available serial data
   if (Serial.available() > 0)
   {
     Serial.print("Serial is available: ");
@@ -202,6 +202,7 @@ void handleIncoming()
     {
       EEPROM.put(SpADRESS, bleReadData.speed);
       settings.speed = bleReadData.speed;
+      proportionalSpeed = settings.speed / 255.0; // Calculates new proportional speed when speed is recieved
     }
 
     Serial.println("Done with changing the values");

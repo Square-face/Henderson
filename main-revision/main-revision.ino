@@ -8,11 +8,6 @@
 #define SETPOINT (sensor_count - 1) * 500;
 
 
-// Enable or dissable verbose logging to BLE serial
-// Having this enabled could seriously reduce performance.
-#define VERBOSE true
-
-
 // Limit how over verbose logs are sent over BLE
 // Higher value will result in lower performance loss but more inacurate data
 #define CYCLES_PER_LOG 25
@@ -32,12 +27,12 @@ const uint16_t calibrationInterval = 20;
 // PID values
 double P, I, D;
 int input, error, previous_error, result;
-double integral, proportionalSpeed;
-signed char output;
-
+double integral;
+int output;
+uint8_t left, right;
 
 // arbitrary value to base the speed around
-uint16_t baseSpeed = 150;
+uint16_t baseSpeed = 255;
 
 
 
@@ -136,6 +131,10 @@ void loop()
 
     case RUNNING:
       running();
+      break;
+
+    case RUNNING_LOGGED:
+      running_logged();
       break;
 
     default:
@@ -275,61 +274,14 @@ void calibratingManual()
 
 // Runs whenever the robot has the RUNNING state
 void running()
+{ 
+  // PID steering
+  PIDController();
+}
+
+void running_logged()
 {
-  if (stateCommand == STANDBY)
-  {
-    Serial.println("State change: Running -> Standby");
-
-    // Disable IRLeds
-    sensors.emittersOff();
-
-    // Disable motors
-    analogWrite(leftMotorSpeed, 0);
-    analogWrite(rightMotorSpeed, 0);
-
-    // Reset PID
-    P = 0.0;
-    I = 0.0;
-    D = 0.0;
-    previous_error = 0;
-
-    // Change state
-    state = STANDBY;
-    stateCommand = NOTHING;
-    return;
-  }
-  
-  // Get line
-  input = readLinePosition();
-  error = input - SETPOINT;
-  baseSpeed = round(255.0 - (abs(error) / 32.0));
-
-  // PID
-  P = settings.Pk * error;
-  I += settings.Ik * error;
-  D = settings.Dk * (previous_error - error);
-
-  // combine and constrain
-  result = P + I + D;
-  output = constrain(result, -128, 127);
-
-  // calculate motor speeds
-  uint8_t left = constrain(round((baseSpeed + output) * proportionalSpeed), 0, 255);
-  uint8_t right = constrain(round((baseSpeed - output) * proportionalSpeed), 0, 255);
-
-  // Set motor speeds
-  analogWrite(leftMotorSpeed, left);
-  analogWrite(rightMotorSpeed, right);
-
-  // update last error
-  previous_error = error;
-  
-
-
-
-  // Handle Logging
-  if (!VERBOSE)
-    return;
+  PIDController();
 
   // inc counter
   if (last_log_cycles < CYCLES_PER_LOG)
@@ -355,7 +307,69 @@ void running()
   for (u8 i = 0; i < sensor_count; i++)
     ble_write(sensor_readings[i]); // Raw sensor data    16 50
 
- // reset counters
+  // reset counters
   last_log_cycles = 0;
   last_log_millis = millis();
+}
+
+// Steers the robot using the PID controller algorithm
+void PIDController()
+{
+  switch (stateCommand)
+  {
+    case STANDBY:
+      Serial.println("State change: Running -> Standby");
+
+      // Disable IRLeds
+      sensors.emittersOff();
+
+      // Disable motors
+      analogWrite(leftMotorSpeed, 0);
+      analogWrite(rightMotorSpeed, 0);
+
+      // Reset PID
+      P = 0.0;
+      I = 0.0;
+      D = 0.0;
+      previous_error = 0;
+
+      // Change state
+      state = STANDBY;
+      stateCommand = NOTHING;
+      return;
+
+    case RUNNING:
+      state = RUNNING;
+      stateCommand = NOTHING;
+      break;
+
+    case RUNNING_LOGGED:
+      state = RUNNING_LOGGED;
+      stateCommand = NOTHING;
+      break;
+  }
+  
+  // Get line
+  input = readLinePosition();
+  error = input - SETPOINT;
+
+  // PID
+  P = settings.Pk * error;
+  I += settings.Ik * error;
+  D = settings.Dk * (error - previous_error);
+
+  // combine and constrain
+  result = P + I + D;
+  output = constrain(result, -255, 255);
+
+  // calculate motor speeds
+  left = constrain(round((baseSpeed + output) * proportionalSpeed), 0, 255);
+  right = constrain(round((baseSpeed - output) * proportionalSpeed), 0, 255);
+
+  // Set motor speeds
+  analogWrite(leftMotorSpeed, left);
+  analogWrite(rightMotorSpeed, right);
+
+  // update last error
+  previous_error = error;
 }

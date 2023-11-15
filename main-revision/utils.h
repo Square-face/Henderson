@@ -21,6 +21,8 @@ enum states
   STANDBY,
   // If the robot is currently running
   RUNNING,
+  // If the robot is currently running with logs
+  RUNNING_LOGGED,
   // If the robot is currently calibrating
   CALIBRATING,
   // If the robot is calibrating, manually moved by us
@@ -101,6 +103,10 @@ uint8_t stateCommand;
 
 // Current settings containing the Pk, Ik, Dk, speed and calibration settings
 config settings;
+
+
+// Calculated speed based on given speed value
+double proportionalSpeed;
 
 
 // Motor 1 left motor direction pin
