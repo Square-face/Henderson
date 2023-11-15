@@ -17,6 +17,12 @@ void initializeSensorPins()
   sensors.setSensorPins((const unsigned char[]){A0, A1, A2, A3, A4, A5, A6, A7}, sensor_count);
   sensors.setEmitterPin(12);
   sensors.calibrate();
+
+  for (u8 i = 0; i < sensor_count; i++)
+  {
+    sensors.calibrationOn.maximum[i] = 0;
+    sensors.calibrationOn.minimum[i] = 1024;
+  }
 }
 
 

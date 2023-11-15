@@ -59,6 +59,11 @@ void setup()
   EEPROM.get(CalMaxADRESS, settings.calibrationMax); 
   EEPROM.get(CalMinADRESS, settings.calibrationMin); 
 
+  // for (u8 i = 0; i < sensor_count; i++)
+  // {
+  //   settings.calibrationMax[i] = sensors.calibrationOn.maximum[i];
+  //   settings.calibrationMin[i] = sensors.calibrationOn.minimum[i];
+  // }
   
   // Load calibration
   Serial.println("Loading calibration values from EEPROM");
@@ -112,10 +117,20 @@ void loop()
       break;
       
     case CALIBRATING:
+      for (u8 i = 0; i < sensor_count; i++)
+      {
+        sensors.calibrationOn.maximum[i] = 0;
+        sensors.calibrationOn.minimum[i] = 1024;
+      }
       calibrating();
       break;
 
     case CALIBRATING_MANUAL:
+      for (u8 i = 0; i < sensor_count; i++)
+      {
+        sensors.calibrationOn.maximum[i] = 0;
+        sensors.calibrationOn.minimum[i] = 1024;
+      } 
       calibratingManual();
       break;
 
@@ -243,6 +258,18 @@ void calibratingManual()
   }
 
   sensors.calibrate(QTRReadMode::On);
+
+  Serial.print("Max: ");
+  for (u8 i = 0; i < sensor_count; i++)
+  {
+    Serial.print(String(sensors.calibrationOn.maximum[i]) + " ");
+  }
+  Serial.print("Min: ");
+  for (u8 i = 0; i < sensor_count; i++)
+  {
+    Serial.print(String(sensors.calibrationOn.minimum[i]) + " ");
+  }
+  Serial.println();
 }
 
 
