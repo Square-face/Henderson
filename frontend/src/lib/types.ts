@@ -3,6 +3,7 @@
 export enum State {
   STANDBY = "Standby",
   RUNNING = "Running",
+  RUNNING_LOGGED = "Running Logged",
   CALIBRATING = "Calibrating",
   CALIBRATING_MANUAL = "Manual calibration",
 }

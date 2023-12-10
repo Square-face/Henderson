@@ -121,11 +121,6 @@ void loop()
       break;
 
     case CALIBRATING_MANUAL:
-      for (u8 i = 0; i < sensor_count; i++)
-      {
-        sensors.calibrationOn.maximum[i] = 0;
-        sensors.calibrationOn.minimum[i] = 1024;
-      } 
       calibratingManual();
       break;
 
@@ -150,6 +145,11 @@ void standby()
   switch(stateCommand)
   {
     case CALIBRATING:
+      for (u8 i = 0; i < sensor_count; i++)
+      {
+        sensors.calibrationOn.maximum[i] = 0;
+        sensors.calibrationOn.minimum[i] = 1024;
+      } 
       Serial.println("State change: Standby -> Calibrating");
       sensors.emittersOn();
       stateCommand = NOTHING;
@@ -157,6 +157,11 @@ void standby()
       return;
 
     case CALIBRATING_MANUAL:
+      for (u8 i = 0; i < sensor_count; i++)
+      {
+        sensors.calibrationOn.maximum[i] = 0;
+        sensors.calibrationOn.minimum[i] = 1024;
+      } 
       Serial.println("State change: Standby -> CalibratingManual");
       sensors.emittersOn();
       stateCommand = NOTHING;
@@ -169,6 +174,14 @@ void standby()
       proportionalSpeed = settings.speed / 255.0;
       stateCommand = NOTHING;
       state = RUNNING;
+      return;
+
+    case RUNNING_LOGGED:
+      Serial.println("State change: Standby -> Running");
+      // sensors.emittersOn();
+      proportionalSpeed = settings.speed / 255.0;
+      stateCommand = NOTHING;
+      state = RUNNING_LOGGED;
       return;
   }
 }

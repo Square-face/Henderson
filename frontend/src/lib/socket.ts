@@ -1,6 +1,6 @@
 import { type Config, type ConfigMask , MaskOn, type Log, type StatusUpdate, State } from "./types";
 
-const ws_url = "ws://192.168.1.192:8000/ws"
+const ws_url = "ws://127.0.0.1:8000/ws"
 
 interface Handlers {
   log?: ((data: Log) => any) 

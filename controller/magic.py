@@ -6,8 +6,9 @@ class State(Enum):
     NOTHING = 0
     STANDBY = 1
     RUNNING = 2
-    CALIBRATING = 3
-    CALIBRATING_MANUAL = 4
+    RUNNING_LOGGED = 3
+    CALIBRATING = 4
+    CALIBRATING_MANUAL = 5
 
 
 class Command:
