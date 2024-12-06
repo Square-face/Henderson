@@ -1,2 +1,0 @@
-default_port: /dev/cu.usbserial-10
-default_fqbn: arduino:avr:nano
